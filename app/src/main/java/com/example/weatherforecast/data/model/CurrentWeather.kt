@@ -6,7 +6,9 @@ data class CurrentWeather(
     val main:Temp,
     val weather:List<Weather>,
     val dt:Long,
-    val sys: Sys
+    val sys: Sys,
+    val wind: Wind,
+    val clouds: Clouds
 )
 data class Temp(
     val temp:Double,
@@ -21,4 +23,12 @@ data class Weather(
 )
 data class Sys(
     val country:String,
+)
+data class Wind(
+    val speed:Double,
+    val deg:Int,
+    val gust:Double
+)
+data class Clouds(
+    val all:Int
 )
