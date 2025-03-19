@@ -22,7 +22,7 @@ class HomeViewModel(val repo:Repositry) : ViewModel() {
 
     fun getCurrentWeather(){
         viewModelScope.launch(Dispatchers.IO){
-            val res = repo.getCurrentWeather(lon=32.2715 , lat=30.5965)
+            val res = repo.getCurrentWeather(lat = 51.5072 , lon=0.1276)
                 res
                     .catch {
                     error->_currentWeather.value = WeatherResponse.Failure(error)
@@ -30,7 +30,6 @@ class HomeViewModel(val repo:Repositry) : ViewModel() {
                     .collect{
                         _currentWeather.value = WeatherResponse.Success(it)
                     }
-
             }
         }
     }
