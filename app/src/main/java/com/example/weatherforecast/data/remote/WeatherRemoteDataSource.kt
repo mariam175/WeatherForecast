@@ -7,4 +7,7 @@ class WeatherRemoteDataSource (val services: WeatherServices){
      fun getCurrentWeather(lat:Double , lon:Double)  = flow{
          services.getCurrentWeather(lat , lon).body()?.let { emit(it) }
     }
+    fun getDailyWeather(lat:Double , lon:Double)  = flow{
+        services.getDailyWeather(lat , lon).body()?.let { emit(it) }
+    }
 }
