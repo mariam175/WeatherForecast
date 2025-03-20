@@ -12,6 +12,8 @@ data class CurrentWeather(
 )
 data class Temp(
     val temp:Double,
+    val temp_min:Double,
+    val temp_max:Double,
     val pressure:Int,
     val humidity:Int,
     val feels_like:Double

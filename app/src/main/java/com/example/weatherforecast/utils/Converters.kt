@@ -11,3 +11,9 @@ fun convertDate(time: Long): String {
     format.timeZone = TimeZone.getDefault()
     return format.format(date)
 }
+
+
+fun convertToHour(timestamp: Long): String {
+    val sdf = SimpleDateFormat("hh a", Locale.getDefault())
+    return sdf.format(Date(timestamp * 1000))
+}
