@@ -24,9 +24,9 @@ class HomeViewModel(val repo:Repositry) : ViewModel() {
     private val _message = MutableSharedFlow<String>()
     val messages = _message.asSharedFlow()
 
-    fun getCurrentWeather(){
+    fun getCurrentWeather(lat:Double , lon:Double){
         viewModelScope.launch(Dispatchers.IO){
-            val res = repo.getCurrentWeather(lat = 51.5072 , lon=0.1276)
+            val res = repo.getCurrentWeather(lat = lat, lon = lon)
                 res
                     .catch {
                     error->_currentWeather.value = WeatherResponse.Failure(error)
@@ -36,9 +36,9 @@ class HomeViewModel(val repo:Repositry) : ViewModel() {
                     }
             }
         }
-    fun getDailyWeather(){
+    fun getDailyWeather(lat:Double , lon:Double){
         viewModelScope.launch(Dispatchers.IO){
-            val res = repo.getDailyWeather(lat = 51.5072 , lon=0.1276)
+            val res = repo.getDailyWeather(lat = lat , lon=lon)
             res
                 .catch {
                         error->_dailyWeather.value = DailyWeatherResponse.Failure(error)

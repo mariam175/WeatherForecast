@@ -70,4 +70,6 @@ dependencies {
     val compose_version = "1.0.0"
     implementation ("androidx.compose.runtime:runtime-livedata:$compose_version")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose-android:2.8.7")
+    implementation("com.google.android.gms:play-services-location:21.1.0")
+    implementation("com.google.maps.android:maps-compose:4.3.3")
 }
