@@ -142,9 +142,9 @@ class MainActivity : ComponentActivity() {
             BottomBar(navController) },
 
             modifier = Modifier.fillMaxSize()
-        ) { it ->
-            Log.i("TAG", "AppScreen: $it")
-            BottomNavGraph(navController , location , Modifier.padding(it))
+        ) { padd ->
+            Log.i("TAG", "AppScreen: $padd")
+            BottomNavGraph(navController , location , Modifier.padding(padd))
         }
     }
 
