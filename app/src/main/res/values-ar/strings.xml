@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">طقسك اليوم</string>
+    <string name="title_activity_home">HomeActivity</string>
+    <string name="three_hours_forecast">طقس لثلاثة ساعات قادمة</string>
+    <string name="five_days_forecast">طقس لخمسة ايام قادمة</string>
+
+    <string name="unit_m_s">م/ث</string>
+    <string name="unit_hpa">hpa</string>
+    <string name="unit_percentage">%</string>
+    <string name="Location">الموقع</string>
+    <string name="Language">اللغة</string>
+    <string name="Temperature">درجة الحرارة</string>
+    <string name="Windspeed">سرغة الرياح</string>
+    <string name="Notification">الاشعارات</string>
+    <string name="Map">الخريطة</string>
+    <string name="Arabic">اللغة العربية</string>
+    <string name="English">اللغة الانجليزيه</string>
+    <string name="error_loading_weather">خطأ جرب مرة اخرى</string>
+
+</resources>

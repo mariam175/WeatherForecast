@@ -45,6 +45,7 @@ import com.example.weatherforecast.favourites.FavouritesScreen
 import com.example.weatherforecast.home.Home
 import com.example.weatherforecast.home.HomeViewModelFactory
 import com.example.weatherforecast.settings.SettingsScreen
+import com.example.weatherforecast.utils.LangaugeChange
 import com.example.weatherforecast.utils.NavigationRoutes
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
@@ -63,8 +64,9 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         loctState = mutableStateOf(Location(""))
-        setContent {
 
+        setContent {
+            remember { mutableStateOf( LangaugeChange.applyLanguage(this , LangaugeChange.getLanguageCode(this))) }
             AppScreen(loctState.value)
         }
     }
@@ -192,6 +194,7 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     fun BottomNavGraph(navHostController: NavHostController , location: Location , modifier: Modifier) {
+        val context = LocalContext.current
         NavHost(
             navController = navHostController,
             startDestination = NavigationRoutes.Home,
@@ -204,7 +207,7 @@ class MainActivity : ComponentActivity() {
                             WeatherRemoteDataSource(
                                 RetrofitHelper.weatherServices
                             )
-                        )
+                        ),context
                     )
                 ) , location)
 
@@ -217,7 +220,10 @@ class MainActivity : ComponentActivity() {
             }
             composable<NavigationRoutes.Settings>() {
 
-                SettingsScreen(navHostController)
+                SettingsScreen(navHostController ,
+                    viewModel(),
+                    context
+                )
             }
         }
     }
