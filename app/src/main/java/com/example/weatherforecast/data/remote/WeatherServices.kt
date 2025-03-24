@@ -13,12 +13,14 @@ interface WeatherServices {
     suspend fun getCurrentWeather(
         @Query("lat") lat:Double ,
         @Query("lon") lon:Double,
+        @Query("lang") lan:String = "en"
         ):Response<CurrentWeather>
 
     @GET("forecast?appid=$API_KEY&units=metric")
     suspend fun getDailyWeather(
         @Query("lat") lat:Double ,
         @Query("lon") lon:Double,
+        @Query("lang") lan:String = "en"
     ):Response<DailyAndHourlyWeather>
 
 }

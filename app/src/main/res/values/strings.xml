@@ -1,4 +1,21 @@
 <resources>
     <string name="app_name">WeatherForecast</string>
     <string name="title_activity_home">HomeActivity</string>
+    <string name="three_hours_forecast">3 Hours Forecast</string>
+    <string name="five_days_forecast">5 Days Forecast</string>
+
+    <string name="unit_m_s">m/s</string>
+    <string name="unit_hpa">hpa</string>
+    <string name="unit_percentage">%</string>
+    <string name="Location">Location</string>
+    <string name="Language">Language</string>
+    <string name="Temperature">Temperature</string>
+    <string name="Windspeed">Wind speed</string>
+    <string name="Notification">Notification</string>
+    <string name="Map">Map</string>
+    <string name="Arabic">Arabic</string>
+    <string name="English">English</string>
+    <string name="error_loading_weather">Error loading weather data</string>
+    <string name="title_activity_my_application">MyApplication</string>
+
 </resources>

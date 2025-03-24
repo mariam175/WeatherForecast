@@ -34,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -177,12 +178,12 @@ import com.google.android.gms.location.Priority
             CharactersItem(
                 img = R.drawable.wind,
                 value = "${weather.wind.speed}",
-                unit = "m/s"
+                unit = stringResource(R.string.unit_m_s)
             )
             CharactersItem(
                 img = R.drawable.pressure,
                 value = "${weather.main.pressure}",
-                unit = "hpa"
+                unit = stringResource(R.string.unit_hpa)
             )
 
             CharactersItem(
@@ -216,7 +217,7 @@ import com.google.android.gms.location.Priority
         val days = groupedByDay.keys.toList()
        Column{
            Text(
-               "3 Hours Forecast"
+               stringResource(R.string.three_hours_forecast)
            )
            Spacer(modifier = Modifier.height(8.dp))
            LazyRow(
@@ -228,7 +229,7 @@ import com.google.android.gms.location.Priority
            }
            Spacer(modifier = Modifier.height(16.dp))
            Text(
-               "5 days Forecast"
+              stringResource(R.string.five_days_forecast)
            )
            Spacer(modifier = Modifier.height(8.dp))
            Column (
