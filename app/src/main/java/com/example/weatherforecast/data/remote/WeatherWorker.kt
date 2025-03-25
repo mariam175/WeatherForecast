@@ -2,14 +2,11 @@ package com.example.weatherforecast.data.remote
 
 import android.annotation.SuppressLint
 import android.content.Context
-import androidx.work.CoroutineWorker
-import androidx.work.ListenableWorker.Result.Success
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.example.weatherforecast.data.reopsitry.Repositry
-import com.example.weatherforecast.utils.LangaugeChange
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import com.example.weatherforecast.utils.SettingsChanges
+
 
 class WeatherWorker(
     private val context: Context,
@@ -24,7 +21,7 @@ class WeatherWorker(
     override  fun doWork(): Result {
 
              try {
-                 val lang = LangaugeChange.getLanguageCode(context)
+                 val lang = SettingsChanges.getLanguageCode(context)
                  repo.getCurrentWeather(lat = lat , lon = lon , lang)
                  repo.getDailyWeather(lat = lat , lon = lon , lang)
                   return Result.Success()

@@ -56,22 +56,19 @@ fun SettingsScreen(navHostController: NavHostController , settingsViewModel: Set
 fun SettingsComponent(context: Context,settingsViewModel: SettingsViewModel) {
     val currCode = settingsViewModel.getCurrentLanguage(context)
     val currLang = if(currCode == "ar") stringResource(R.string.Arabic) else stringResource(R.string.English)
-    val sections = listOf(
-        stringResource(R.string.Location) to Pair(R.drawable.placeholder ,
-            listOf("GPS", stringResource(R.string.Map))),
-        stringResource(R.string.Language) to Pair(R.drawable.translate ,
-            listOf(stringResource(R.string.Arabic) , stringResource(R.string.English))),
-        stringResource(R.string.Temperature) to Pair(R.drawable.temperature ,
-            listOf("Celsius" , "kelvin" , "Fahrenheit")),
-        stringResource(R.string.Windspeed) to Pair(R.drawable.windsetting ,
-            listOf("m/s" , "mile/h")),
-        stringResource(R.string.Notification) to Pair(R.drawable.bell , emptyList())
-    )
+    val currTemp = settingsViewModel.geUnit(context)
+    val currentUnit = if(currTemp == "metric") stringResource(R.string.Celsius) else if(currTemp == "standard") stringResource(R.string.kelvin) else stringResource(R.string.Fahrenheit)
 
+   val sections = ListOfOptions()
     val expandedStates = remember { mutableStateMapOf<String, Boolean>() }
-    val selectedItems = remember { mutableStateOf(currLang) }
-    val updatedLang = rememberUpdatedState(currLang)
-
+    val selectedItems = remember { mutableStateMapOf<String, String>() }
+    val languageKey = stringResource(R.string.Language)
+    val temperatureKey = stringResource(R.string.Temperature)
+    val speedKey = stringResource(R.string.Windspeed)
+    selectedItems["Language"] = currLang
+    selectedItems["Temperature"] = currentUnit
+    val currSpeed = settingsViewModel.geWindSpeed(context)
+    selectedItems[speedKey] = currSpeed
     LazyColumn(modifier = Modifier.fillMaxSize().padding(16.dp)) {
         sections.forEach { (title, pair) ->
             item {
@@ -118,21 +115,77 @@ fun SettingsComponent(context: Context,settingsViewModel: SettingsViewModel) {
                             items.forEach { item ->
                                 Row(verticalAlignment = Alignment.CenterVertically) {
                                     RadioButton(
-                                        selected = selectedItems.value == item || updatedLang.value == item,
+                                        selected = selectedItems[title] == item,
                                         onClick = {
-                                            selectedItems.value = item
-                                            val code = if (item == "Arabic") "ar" else "en"
-                                            settingsViewModel.changeLanguage(context, code)
-
+                                            selectedItems[title] = item
+                                            when (title) {
+                                                languageKey -> {
+                                                    val code = if (item == context.getString(R.string.Arabic)) "ar" else "en"
+                                                    settingsViewModel.changeLanguage(context, code)
+                                                }
+                                                temperatureKey -> {
+                                                    val unit = changeTempUnit(item, context)
+                                                    settingsViewModel.changeUnit(context, unit)
+                                                    val newSpeed = changeWindSpeed(item, context)
+                                                    selectedItems[speedKey] = newSpeed
+                                                    settingsViewModel.changeWindSpeed(context, newSpeed)
+                                                }
+                                                speedKey->{
+//                                                    val speed = changeWindSpeed(temperatureKey , context)
+//                                                    settingsViewModel.changeWindSpeed(context , speed)
+                                                }
+                                            }
                                         }
                                     )
                                     Text(item, modifier = Modifier.padding(start = 8.dp))
                                 }
                             }
+
                         }
                     }
                 }
             }
         }
     }
+}
+@Composable
+fun ListOfOptions() :  List<Pair<String, Pair<Int, List<String>>>>{
+    val sections = listOf(
+        stringResource(R.string.Location) to Pair(R.drawable.placeholder ,
+            listOf("GPS", stringResource(R.string.Map))),
+        stringResource(R.string.Language) to Pair(R.drawable.translate ,
+            listOf(
+                stringResource(R.string.Arabic) ,
+                stringResource(R.string.English))),
+        stringResource(R.string.Temperature) to Pair(R.drawable.temperature ,
+            listOf(
+                stringResource(R.string.Celsius),
+                stringResource(R.string.kelvin) ,
+                stringResource(R.string.Fahrenheit)
+            )),
+        stringResource(R.string.Windspeed) to Pair(R.drawable.windsetting ,
+            listOf(stringResource(R.string.unit_m_s) , stringResource(R.string.mileh))),
+        stringResource(R.string.Notification) to Pair(R.drawable.bell , emptyList())
+    )
+    return sections
+}
+
+fun changeTempUnit(item : String , context: Context):String{
+    var unit = ""
+    when (item) {
+        context.getString(R.string.Fahrenheit) -> unit  = "imperial"
+        context.getString(R.string.kelvin) -> unit = "standard"
+        else -> unit = "metric"
+    }
+    return unit
+}
+fun changeWindSpeed(curr:String , context: Context):String{
+    var speed = ""
+    if (curr == context.getString(R.string.kelvin)){
+        speed = context.getString(R.string.mileh)
+    }
+    else{
+        speed = context.getString(R.string.unit_m_s)
+    }
+    return speed
 }

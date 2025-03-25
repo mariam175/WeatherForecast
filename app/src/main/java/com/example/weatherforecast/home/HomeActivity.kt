@@ -2,6 +2,7 @@ package com.example.weatherforecast.home
 
 
 import android.location.Location
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -23,6 +24,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -67,11 +69,19 @@ import com.google.android.gms.location.Priority
 
 @Composable
     fun Home(navHostController: NavHostController,homeViewModel: HomeViewModel , location: Location) {
-        homeViewModel.getCurrentWeather(lat = location.latitude , lon = location.longitude)
-        homeViewModel.getDailyWeather(lat = location.latitude , lon = location.longitude)
+        val lang = homeViewModel.getLanguage()
+        val unit = homeViewModel.getUnit()
+        homeViewModel.getWindSpeed()
+         LaunchedEffect (location , lang , unit){
+             homeViewModel.getCurrentWeather(lat = location.latitude , lon = location.longitude , lang = lang , unit=unit)
+             homeViewModel.getDailyWeather(lat = location.latitude , lon = location.longitude , lang=lang , unit=unit)
+             Log.i("TAG", "Home: $lang")
+         }
+
         val weatherState by homeViewModel.currentWeather.collectAsState()
         val dailyState by homeViewModel.dailyWeather.collectAsState()
-
+    val windSpeed by homeViewModel.speed.collectAsState()
+    val unitSymbole = homeViewModel.getSympole()
         when (weatherState) {
             is WeatherResponse.Loading -> Loading()
             is WeatherResponse.Success -> {
@@ -83,7 +93,7 @@ import com.google.android.gms.location.Priority
                         .verticalScroll(rememberScrollState()),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    CurrentWeather(currentWeather)
+                    CurrentWeather(currentWeather , windSpeed , unitSymbole)
                     if (dailyState is DailyWeatherResponse.Success) {
                         val dailyWeather = (dailyState as DailyWeatherResponse.Success).data
                         Spacer(modifier = Modifier.height(16.dp))
@@ -106,7 +116,7 @@ import com.google.android.gms.location.Priority
 
     @OptIn(ExperimentalGlideComposeApi::class)
     @Composable
-    fun CurrentWeather(weather: CurrentWeather) {
+    fun CurrentWeather(weather: CurrentWeather , unit: String , sympole:String) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
@@ -133,7 +143,7 @@ import com.google.android.gms.location.Priority
             }
             Spacer(modifier = Modifier.height(40.dp))
             Text(
-                "${weather.main.temp.toInt()}°C",
+                "${weather.main.temp.toInt()}°$sympole",
                 fontSize = 40.sp,
                 fontStyle = FontStyle.Italic
             )
@@ -148,7 +158,7 @@ import com.google.android.gms.location.Priority
                 color = Color.Gray
             )
             Spacer(modifier = Modifier.height(16.dp))
-            WeatherChracteristic(weather)
+            WeatherChracteristic(weather , unit)
         }
     }
 
@@ -164,7 +174,7 @@ import com.google.android.gms.location.Priority
     }
 
     @Composable
-    fun WeatherChracteristic(weather: CurrentWeather) {
+    fun WeatherChracteristic(weather: CurrentWeather , unit:String) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(60.dp),
             modifier = Modifier
@@ -178,7 +188,7 @@ import com.google.android.gms.location.Priority
             CharactersItem(
                 img = R.drawable.wind,
                 value = "${weather.wind.speed}",
-                unit = stringResource(R.string.unit_m_s)
+                unit = unit
             )
             CharactersItem(
                 img = R.drawable.pressure,
