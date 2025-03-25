@@ -3,14 +3,13 @@ package com.example.weatherforecast.home
 
 import android.content.Context
 import android.util.Log
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.weatherforecast.data.model.DailyWeatherResponse
 import com.example.weatherforecast.data.model.WeatherResponse
 import com.example.weatherforecast.data.reopsitry.Repositry
-import com.example.weatherforecast.utils.LangaugeChange
+import com.example.weatherforecast.utils.SettingsChanges
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,18 +18,43 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
 
-class HomeViewModel(val repo:Repositry , context: Context) : ViewModel() {
+class HomeViewModel(val repo:Repositry , val context: Context) : ViewModel() {
     private val _currentWeather = MutableStateFlow<WeatherResponse>(WeatherResponse.Loading)
     val currentWeather  = _currentWeather.asStateFlow()
     private val _dailyWeather = MutableStateFlow<DailyWeatherResponse>(DailyWeatherResponse.Loading)
     val dailyWeather  = _dailyWeather.asStateFlow()
     private val _message = MutableSharedFlow<String>()
     val messages = _message.asSharedFlow()
+    private val _lang = MutableStateFlow<String>("en")
+    val lang  = _lang.asStateFlow()
+    private val _unit = MutableStateFlow<String>("metric")
+    val unit  = _unit.asStateFlow()
+    private val _speed = MutableStateFlow<String>("m/s")
+    val speed  = _speed.asStateFlow()
 
-    val lang = LangaugeChange.getLanguageCode(context)
-    fun getCurrentWeather(lat:Double , lon:Double){
+    fun getLanguage() : String{
+       _lang.value = SettingsChanges.getLanguageCode(context)
+        return _lang.value
+    }
+    fun getUnit() : String{
+        _unit.value = SettingsChanges.getUnit(context)
+        return _unit.value
+    }
+    fun getWindSpeed(){
+        _speed.value = SettingsChanges.getWindSpeed(context)
+
+    }
+    fun getSympole():String{
+        val sympol = when(unit.value){
+            "metric" -> "C"
+             "standard" -> "K"
+            else->"F"
+        }
+        return sympol
+    }
+    fun getCurrentWeather(lat:Double , lon:Double , lang:String , unit:String){
         viewModelScope.launch(Dispatchers.IO){
-            val res = repo.getCurrentWeather(lat = lat, lon = lon , lan=lang)
+            val res = repo.getCurrentWeather(lat = lat, lon = lon , lan=lang , unit=unit)
             Log.i("TAG", "getCurrentWeather: $lang")
                 res
                     .catch {
@@ -41,9 +65,9 @@ class HomeViewModel(val repo:Repositry , context: Context) : ViewModel() {
                     }
             }
         }
-    fun getDailyWeather(lat:Double , lon:Double){
+    fun getDailyWeather(lat:Double , lon:Double , lang:String , unit: String){
         viewModelScope.launch(Dispatchers.IO){
-            val res = repo.getDailyWeather(lat = lat , lon=lon , lan = lang)
+            val res = repo.getDailyWeather(lat = lat , lon=lon , lan = lang , unit = unit)
             res
                 .catch {
                         error->_dailyWeather.value = DailyWeatherResponse.Failure(error)

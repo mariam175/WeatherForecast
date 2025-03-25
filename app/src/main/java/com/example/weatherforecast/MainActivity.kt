@@ -45,7 +45,7 @@ import com.example.weatherforecast.favourites.FavouritesScreen
 import com.example.weatherforecast.home.Home
 import com.example.weatherforecast.home.HomeViewModelFactory
 import com.example.weatherforecast.settings.SettingsScreen
-import com.example.weatherforecast.utils.LangaugeChange
+import com.example.weatherforecast.utils.SettingsChanges
 import com.example.weatherforecast.utils.NavigationRoutes
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
@@ -64,9 +64,10 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         loctState = mutableStateOf(Location(""))
-
+        val lang =  mutableStateOf(SettingsChanges.getLanguageCode(this))
         setContent {
-            remember { mutableStateOf( LangaugeChange.applyLanguage(this , LangaugeChange.getLanguageCode(this))) }
+
+            remember { mutableStateOf( SettingsChanges.applyLanguage(this , lang.value)) }
             AppScreen(loctState.value)
         }
     }
