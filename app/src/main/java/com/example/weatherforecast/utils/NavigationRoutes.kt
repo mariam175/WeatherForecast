@@ -1,5 +1,6 @@
 package com.example.weatherforecast.utils
 
+import android.location.Location
 import com.example.weatherforecast.R
 import kotlinx.serialization.Serializable
 
@@ -24,4 +25,9 @@ sealed class NavigationRoutes(
     object Settings : NavigationRoutes(
         title = "Settings" ,
         icon = R.drawable.settings)
+    @Serializable
+    object MapScreen:NavigationRoutes(
+        title = "",
+        icon = 0
+    )
 }

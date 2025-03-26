@@ -44,6 +44,7 @@ import com.example.weatherforecast.data.reopsitry.Repositry
 import com.example.weatherforecast.favourites.FavouritesScreen
 import com.example.weatherforecast.home.Home
 import com.example.weatherforecast.home.HomeViewModelFactory
+import com.example.weatherforecast.map.MapScreen
 import com.example.weatherforecast.settings.SettingsScreen
 import com.example.weatherforecast.utils.SettingsChanges
 import com.example.weatherforecast.utils.NavigationRoutes
@@ -153,14 +154,14 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     fun BottomBar(navHostController: NavHostController) {
-        val listOfScreens = arrayOf(
+        val listOfScreens = arrayOf<NavigationRoutes>(
            NavigationRoutes.Home,
             NavigationRoutes.Favourites,
             NavigationRoutes.Alerts,
             NavigationRoutes.Settings
         )
         val navBackStackEntry = navHostController.currentBackStackEntryAsState()
-        val currentDestination = navBackStackEntry.value?.destination
+
         val selectedItem = remember { mutableStateOf(0) }
         NavigationBar (
             modifier = Modifier.height(60.dp)
@@ -225,6 +226,9 @@ class MainActivity : ComponentActivity() {
                     viewModel(),
                     context
                 )
+            }
+            composable<NavigationRoutes.MapScreen>() {
+                MapScreen(navHostController , viewModel() , context)
             }
         }
     }

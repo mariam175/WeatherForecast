@@ -23,4 +23,10 @@ class SettingsViewModel() : ViewModel() {
     fun geWindSpeed(context: Context):String{
         return SettingsChanges.getWindSpeed(context)
     }
+    fun changeLocationType(context: Context , type:String){
+        SettingsChanges.changeLocation(context , type)
+    }
+    fun getLocationType(context: Context):String{
+        return SettingsChanges.getLocationType(context)
+    }
 }
