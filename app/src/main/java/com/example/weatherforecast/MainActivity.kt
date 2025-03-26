@@ -37,14 +37,19 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.example.weatherforecast.alerts.AlertsScreen
+import com.example.weatherforecast.data.local.CitiesLocalDataSource
+import com.example.weatherforecast.data.local.FavDataBase
 import com.example.weatherforecast.data.remote.RetrofitHelper
 import com.example.weatherforecast.data.remote.WeatherRemoteDataSource
 import com.example.weatherforecast.data.reopsitry.Repositry
+import com.example.weatherforecast.favourites.FavouriteViewModelFactory
 import com.example.weatherforecast.favourites.FavouritesScreen
 import com.example.weatherforecast.home.Home
 import com.example.weatherforecast.home.HomeViewModelFactory
 import com.example.weatherforecast.map.MapScreen
+import com.example.weatherforecast.map.MapViewModelFactory
 import com.example.weatherforecast.settings.SettingsScreen
 import com.example.weatherforecast.utils.SettingsChanges
 import com.example.weatherforecast.utils.NavigationRoutes
@@ -208,6 +213,9 @@ class MainActivity : ComponentActivity() {
                         Repositry(
                             WeatherRemoteDataSource(
                                 RetrofitHelper.weatherServices
+                            ),
+                            CitiesLocalDataSource(
+                                FavDataBase.getInstance(context).getFavDao()
                             )
                         ),context
                     )
@@ -215,7 +223,19 @@ class MainActivity : ComponentActivity() {
 
             }
             composable<NavigationRoutes.Favourites>() {
-                FavouritesScreen(navHostController)
+                FavouritesScreen(navHostController ,
+                    viewModel(
+                        factory = FavouriteViewModelFactory(
+                            Repositry(
+                                WeatherRemoteDataSource(
+                                    RetrofitHelper.weatherServices
+                                ),
+                                CitiesLocalDataSource(
+                                    FavDataBase.getInstance(context).getFavDao()
+                                )
+                            )
+                        )
+                    ))
             }
             composable<NavigationRoutes.Alerts>() {
                 AlertsScreen(navHostController)
@@ -228,7 +248,22 @@ class MainActivity : ComponentActivity() {
                 )
             }
             composable<NavigationRoutes.MapScreen>() {
-                MapScreen(navHostController , viewModel() , context)
+                backStackEntry->
+                val isFav = backStackEntry.toRoute<NavigationRoutes.MapScreen>().isFav
+                MapScreen(navHostController ,
+                    viewModel(
+                        factory = MapViewModelFactory(
+                            Repositry(
+                                WeatherRemoteDataSource(
+                                    RetrofitHelper.weatherServices
+                                ),
+                                CitiesLocalDataSource(
+                                    FavDataBase.getInstance(context).getFavDao()
+                                )
+                            )
+                        )
+                    ) ,
+                    context , isFav)
             }
         }
     }

@@ -14,7 +14,7 @@ sealed class NavigationRoutes(
         title = "Home" ,
         icon = R.drawable.home)
     @Serializable
-    object Favourites : NavigationRoutes(
+    object Favourites: NavigationRoutes(
         title = "Favourites" ,
         icon = R.drawable.favorite)
     @Serializable
@@ -26,7 +26,7 @@ sealed class NavigationRoutes(
         title = "Settings" ,
         icon = R.drawable.settings)
     @Serializable
-    object MapScreen:NavigationRoutes(
+    class MapScreen(val isFav:Boolean):NavigationRoutes(
         title = "",
         icon = 0
     )

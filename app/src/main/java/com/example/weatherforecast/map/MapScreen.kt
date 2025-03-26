@@ -25,11 +25,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.weatherforecast.data.model.Favourites
 import com.google.maps.android.compose.GoogleMap
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MapScreen (navHostController: NavHostController , mapViewModel: MapViewModel , context: Context){
+fun MapScreen (navHostController: NavHostController ,
+               mapViewModel: MapViewModel ,
+               context: Context ,
+               isFav:Boolean){
     val sheetState = rememberModalBottomSheetState()
     val coroutineScope = rememberCoroutineScope()
 
@@ -67,10 +71,22 @@ fun MapScreen (navHostController: NavHostController , mapViewModel: MapViewModel
                 Spacer(modifier = Modifier.height(16.dp))
                 Button(
                     onClick = {
-                        showBottomSheet = false
-                        selectedLocation?.let {
-                            mapViewModel.saveLatLng(context ,
-                                selectedLocation!!.first, selectedLocation!!.second)
+                        if(isFav){
+                            mapViewModel.addCityToFav(
+                                Favourites(
+                                    city = cityName,
+                                    lat = selectedLocation?.first?:0.0,
+                                    lon = selectedLocation?.second?:0.0
+                                )
+                            )
+                            navHostController.popBackStack()
+
+                        }else{
+                            showBottomSheet = false
+                            selectedLocation?.let {
+                                mapViewModel.saveLatLng(context ,
+                                    selectedLocation!!.first, selectedLocation!!.second)
+                            }
                         }
                     }
                 ) {
