@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.weatherforecast.R
+import com.example.weatherforecast.utils.NavigationRoutes
 
 @Composable
 fun SettingsScreen(navHostController: NavHostController , settingsViewModel: SettingsViewModel , context: Context) {
@@ -48,25 +49,30 @@ fun SettingsScreen(navHostController: NavHostController , settingsViewModel: Set
             .padding(top = 40.dp),
         verticalArrangement = Arrangement.Center
     ){
-        SettingsComponent(context , settingsViewModel)
+        SettingsComponent(context , settingsViewModel){
+            navHostController.navigate(NavigationRoutes.MapScreen)
+        }
     }
 }
 
 @Composable
-fun SettingsComponent(context: Context,settingsViewModel: SettingsViewModel) {
+fun SettingsComponent(context: Context,settingsViewModel: SettingsViewModel , nav:()->Unit) {
     val currCode = settingsViewModel.getCurrentLanguage(context)
     val currLang = if(currCode == "ar") stringResource(R.string.Arabic) else stringResource(R.string.English)
     val currTemp = settingsViewModel.geUnit(context)
     val currentUnit = if(currTemp == "metric") stringResource(R.string.Celsius) else if(currTemp == "standard") stringResource(R.string.kelvin) else stringResource(R.string.Fahrenheit)
-
+    val currType = settingsViewModel.getLocationType(context)
    val sections = ListOfOptions()
     val expandedStates = remember { mutableStateMapOf<String, Boolean>() }
     val selectedItems = remember { mutableStateMapOf<String, String>() }
     val languageKey = stringResource(R.string.Language)
     val temperatureKey = stringResource(R.string.Temperature)
     val speedKey = stringResource(R.string.Windspeed)
+    val locKey = stringResource(R.string.Location)
     selectedItems["Language"] = currLang
     selectedItems["Temperature"] = currentUnit
+    selectedItems[locKey] = if (currType == "gps") "GPS" else stringResource(R.string.Map)
+
     val currSpeed = settingsViewModel.geWindSpeed(context)
     selectedItems[speedKey] = currSpeed
     LazyColumn(modifier = Modifier.fillMaxSize().padding(16.dp)) {
@@ -133,6 +139,13 @@ fun SettingsComponent(context: Context,settingsViewModel: SettingsViewModel) {
                                                 speedKey->{
 //                                                    val speed = changeWindSpeed(temperatureKey , context)
 //                                                    settingsViewModel.changeWindSpeed(context , speed)
+                                                }
+                                                locKey->{
+                                                    val type = if (item == context.getString(R.string.Map)) "map" else "gps"
+                                                    settingsViewModel.changeLocationType(context, type)
+                                                    if (item == context.getString(R.string.Map)){
+                                                        nav.invoke()
+                                                    }
                                                 }
                                             }
                                         }

@@ -77,7 +77,13 @@ class HomeViewModel(val repo:Repositry , val context: Context) : ViewModel() {
                 }
         }
     }
+    fun getLocationFromPref():Pair<Double,Double>{
+        return SettingsChanges.getLatLangType(context)
     }
+    fun getLocatioType():String{
+       return SettingsChanges.getLocationType(context)
+    }
+}
 
 class HomeViewModelFactory(val repo: Repositry , val con: Context) : ViewModelProvider.Factory{
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

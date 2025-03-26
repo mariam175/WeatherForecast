@@ -68,13 +68,24 @@ import com.google.android.gms.location.Priority
 
 
 @Composable
-    fun Home(navHostController: NavHostController,homeViewModel: HomeViewModel , location: Location) {
+    fun Home(navHostController: NavHostController,homeViewModel: HomeViewModel , gpsLocation: Location) {
         val lang = homeViewModel.getLanguage()
         val unit = homeViewModel.getUnit()
         homeViewModel.getWindSpeed()
-         LaunchedEffect (location , lang , unit){
-             homeViewModel.getCurrentWeather(lat = location.latitude , lon = location.longitude , lang = lang , unit=unit)
-             homeViewModel.getDailyWeather(lat = location.latitude , lon = location.longitude , lang=lang , unit=unit)
+        val mapLocation = homeViewModel.getLocationFromPref()
+        val locType = homeViewModel.getLocatioType()
+         LaunchedEffect (gpsLocation , lang , unit){
+            when(locType){
+                "gps"->{
+                    homeViewModel.getCurrentWeather(lat = gpsLocation.latitude , lon = gpsLocation.longitude , lang = lang , unit=unit)
+                    homeViewModel.getDailyWeather(lat = gpsLocation.latitude , lon = gpsLocation.longitude , lang=lang , unit=unit)
+                }
+                "map"->{
+                    homeViewModel.getCurrentWeather(lat = mapLocation.first , lon = mapLocation.second , lang = lang , unit=unit)
+                    homeViewModel.getDailyWeather(lat = mapLocation.first , lon = mapLocation.second , lang=lang , unit=unit)
+                    Log.i("TAG", "Map Loc: ${mapLocation.first} ${mapLocation.second}")
+                }
+            }
              Log.i("TAG", "Home: $lang")
          }
 
@@ -83,7 +94,9 @@ import com.google.android.gms.location.Priority
     val windSpeed by homeViewModel.speed.collectAsState()
     val unitSymbole = homeViewModel.getSympole()
         when (weatherState) {
-            is WeatherResponse.Loading -> Loading()
+            is WeatherResponse.Loading -> {
+                Loading()
+            }
             is WeatherResponse.Success -> {
                 val currentWeather = (weatherState as WeatherResponse.Success).data
                 Column(
