@@ -1,6 +1,7 @@
 package com.example.weatherforecast.data.reopsitry
 
 import com.example.weatherforecast.data.local.CitiesLocalDataSource
+import com.example.weatherforecast.data.model.Alert
 import com.example.weatherforecast.data.model.CurrentWeather
 import com.example.weatherforecast.data.model.DailyAndHourlyWeather
 import com.example.weatherforecast.data.model.Favourites
@@ -22,5 +23,14 @@ class Repositry(val weatherRemoteDataSource: WeatherRemoteDataSource , val cityL
     }
     suspend fun deleteCity(city:Favourites):Int{
         return cityLocalDataSource.deleteCity(city)
+    }
+    fun getAllAlert():Flow<List<Alert>>{
+        return cityLocalDataSource.getAllAlerts()
+    }
+    suspend fun addAlert(alert: Alert):Long{
+        return cityLocalDataSource.addAlert(alert)
+    }
+    suspend fun deleteAlert(alert: Alert):Int{
+        return cityLocalDataSource.deleteAlert(alert)
     }
 }

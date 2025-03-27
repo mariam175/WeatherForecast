@@ -14,6 +14,9 @@ object SettingsChanges {
     private const val LOCATION = "location"
     private const val LAT = "lat"
     private const val LNG = "lng"
+    private const val CURRLAT = "currlat"
+    private const val CURRLNG = "currlng"
+    private const val CITY = "city"
     fun changeLanguage(context: Context, languageCode: String) {
         val preferences: SharedPreferences =
             context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -82,5 +85,29 @@ object SettingsChanges {
          val lat = preferences.getFloat(LAT, 0f)
          val lng = preferences.getFloat(LNG, 0f)
         return Pair(lat.toDouble() , lng.toDouble())
+    }
+    fun saveCurrentLocation(context: Context , lat:Double , lng:Double){
+        val preferences: SharedPreferences =
+            context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        preferences.edit().putFloat(CURRLAT, lat.toFloat()).apply()
+        preferences.edit().putFloat(CURRLNG, lng.toFloat()).apply()
+    }
+    fun getCurrentLocation(context: Context):Pair<Double , Double>{
+        val preferences: SharedPreferences =
+            context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val lat = preferences.getFloat(CURRLAT, 0f)
+        val lng = preferences.getFloat(CURRLNG, 0f)
+        return Pair(lat.toDouble() , lng.toDouble())
+    }
+    fun saveCurrentCity(context: Context , city:String){
+        val preferences: SharedPreferences =
+            context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        preferences.edit().putString(CITY, city).apply()
+    }
+    fun getCurrentCity(context: Context):String{
+        val preferences: SharedPreferences =
+            context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        val city = preferences.getString(CITY, "")?:""
+        return city
     }
 }
