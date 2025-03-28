@@ -40,7 +40,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.example.weatherforecast.alerts.AlertsScreen
 import com.example.weatherforecast.alerts.AlertsViewModelFactory
-import com.example.weatherforecast.data.local.CitiesLocalDataSource
+import com.example.weatherforecast.data.local.WeatherLocalDataSource
 import com.example.weatherforecast.data.local.WeatherDataBase
 import com.example.weatherforecast.data.remote.RetrofitHelper
 import com.example.weatherforecast.data.remote.WeatherRemoteDataSource
@@ -215,7 +215,7 @@ class MainActivity : ComponentActivity() {
                             WeatherRemoteDataSource(
                                 RetrofitHelper.weatherServices
                             ),
-                            CitiesLocalDataSource(
+                            WeatherLocalDataSource(
                                 WeatherDataBase.getInstance(context).getFavDao()
                             )
                         ),context
@@ -231,7 +231,7 @@ class MainActivity : ComponentActivity() {
                                 WeatherRemoteDataSource(
                                     RetrofitHelper.weatherServices
                                 ),
-                                CitiesLocalDataSource(
+                                WeatherLocalDataSource(
                                     WeatherDataBase.getInstance(context).getFavDao()
                                 )
                             )
@@ -245,7 +245,7 @@ class MainActivity : ComponentActivity() {
                             WeatherRemoteDataSource(
                                 RetrofitHelper.weatherServices
                             ),
-                            CitiesLocalDataSource(
+                            WeatherLocalDataSource(
                                 WeatherDataBase.getInstance(context).getFavDao()
                             )
                         ),context
@@ -270,7 +270,7 @@ class MainActivity : ComponentActivity() {
                                 WeatherRemoteDataSource(
                                     RetrofitHelper.weatherServices
                                 ),
-                                CitiesLocalDataSource(
+                                WeatherLocalDataSource(
                                     WeatherDataBase.getInstance(context).getFavDao()
                                 )
                             )

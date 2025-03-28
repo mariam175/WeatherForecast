@@ -11,7 +11,7 @@ data class CurrentWeather(
     val clouds: Clouds
 )
 data class Temp(
-    val temp:Double,
+    var temp:Double,
     val temp_min:Double,
     val temp_max:Double,
     val pressure:Int,
@@ -20,7 +20,7 @@ data class Temp(
 )
 data class Weather(
     val main:String,
-    val description:String,
+    var description:String,
     val icon:String
 )
 data class Sys(
