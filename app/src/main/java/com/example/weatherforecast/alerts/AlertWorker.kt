@@ -5,17 +5,14 @@ import android.content.Context
 import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.example.weatherforecast.data.local.CitiesLocalDataSource
+import com.example.weatherforecast.data.local.WeatherLocalDataSource
 import com.example.weatherforecast.data.local.WeatherDataBase
-import com.example.weatherforecast.data.model.Alert
 import com.example.weatherforecast.data.remote.RetrofitHelper
 import com.example.weatherforecast.data.remote.WeatherRemoteDataSource
 import com.example.weatherforecast.data.reopsitry.Repositry
 import com.example.weatherforecast.utils.Notification
-import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.withContext
 
@@ -31,7 +28,7 @@ class AlertWorker(context: Context,
         Log.i("TAG", "doWork: $lat $lon")
         val repo = Repositry(
             WeatherRemoteDataSource(RetrofitHelper.weatherServices),
-            CitiesLocalDataSource(WeatherDataBase.getInstance(applicationContext).getFavDao())
+            WeatherLocalDataSource(WeatherDataBase.getInstance(applicationContext).getFavDao())
         )
         val curr = repo.getCurrentWeather(lat , lon)
         val alert = withContext(Dispatchers.IO) { repo.getAlertById(alertId).firstOrNull() }
