@@ -171,7 +171,7 @@ fun FavItem(city:String , delete:()->Unit) {
             city,
             fontWeight = FontWeight.Bold
         )
-        Spacer(modifier = Modifier.width(100.dp))
+        Spacer(modifier = Modifier.weight(1f))
         Image(
             painter = painterResource(R.drawable.trash),
             contentDescription = "",

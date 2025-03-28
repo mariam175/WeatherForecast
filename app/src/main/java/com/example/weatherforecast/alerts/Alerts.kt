@@ -4,6 +4,7 @@ import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -74,13 +75,14 @@ fun AlertsScreen(navHostController: NavHostController , alertsViewModel: AlertsV
                 ,
                 onClick = {
                     showDateTimePicker(context){ time->
-                        alertsViewModel.scheduleWeatherNotification(context , time)
-                        alertsViewModel.addAlert(
-                           Alert(
-                               cityName = alertsViewModel.getCurrentCity(),
-                               time = time.time.toString()
-                           )
+                        val alert =  Alert(
+                            cityName = alertsViewModel.getCurrentCity(),
+                            time = time.time.toString()
                         )
+                        alertsViewModel.addAlert(alert){
+                            alertsViewModel.scheduleWeatherNotification(context , time , it)
+                        }
+                        Log.i("TAG", "AlertsScreen: ${alert.cityName}")
                     }
                 }
             ) {
@@ -151,8 +153,7 @@ fun AlertList(alerts: List<Alert>, alertsViewModel: AlertsViewModel) {
 
 fun showDateTimePicker(context: Context, onDateTimeSelected: (Calendar) -> Unit) {
     val calendar = Calendar.getInstance()
-
-    DatePickerDialog(
+    val datePickerDialog = DatePickerDialog(
         context,
         { _, year, month, dayOfMonth ->
             calendar.set(Calendar.YEAR, year)
@@ -166,7 +167,10 @@ fun showDateTimePicker(context: Context, onDateTimeSelected: (Calendar) -> Unit)
         calendar.get(Calendar.YEAR),
         calendar.get(Calendar.MONTH),
         calendar.get(Calendar.DAY_OF_MONTH)
-    ).show()
+
+    )
+    datePickerDialog.datePicker.minDate = System.currentTimeMillis()
+    datePickerDialog.show()
 }
 
 @Composable
@@ -177,22 +181,24 @@ fun Alert(city:String,time:String , delete:()->Unit) {
             .padding(16.dp),
     ){
         Icon(
-            painter = painterResource(R.drawable.placeholder),
+            painter = painterResource(R.drawable.bell),
             contentDescription = "",
             modifier = Modifier.size(24.dp),
             tint = Color.Unspecified
         )
         Spacer(modifier = Modifier.width(10.dp))
-        Text(
-            city,
-            fontWeight = FontWeight.Bold
-        )
-        Spacer(modifier = Modifier.width(20.dp))
-        Text(
-            time,
-
-        )
-        Spacer(modifier = Modifier.width(100.dp))
+       Column {
+           Text(
+               city,
+               fontWeight = FontWeight.Bold
+           )
+           Spacer(modifier = Modifier.height(5.dp))
+           Text(
+               alertTime(time),
+               color = Color.Gray
+               )
+       }
+        Spacer(modifier = Modifier.weight(1f))
         Image(
             painter = painterResource(R.drawable.trash),
             contentDescription = "",
@@ -216,6 +222,7 @@ fun Loading() {
 }
 
  fun showTimePicker(context: Context, calendar: Calendar, onTimeSelected: (Calendar) -> Unit) {
+     val currentCalendar = Calendar.getInstance()
     TimePickerDialog(
         context,
         { _, hour, minute ->
@@ -223,11 +230,25 @@ fun Loading() {
             calendar.set(Calendar.MINUTE, minute)
             calendar.set(Calendar.SECOND, 0)
 
-            onTimeSelected(calendar)
+            if (calendar.timeInMillis >= currentCalendar.timeInMillis) {
+                onTimeSelected(calendar)
+            } else {
+                Toast.makeText(context , "Cannot select past time ... Try Again" , Toast.LENGTH_SHORT).show()
+            }
         },
         calendar.get(Calendar.HOUR_OF_DAY),
         calendar.get(Calendar.MINUTE),
         true
     ).show()
      Log.i("TAG", "showTimePicker: $")
+}
+fun alertTime(time: String): String {
+    return try {
+        val inputFormat = java.text.SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy", java.util.Locale.ENGLISH)
+        val outputFormat = java.text.SimpleDateFormat("hh:mm a, dd MMM", java.util.Locale.ENGLISH)
+        val date = inputFormat.parse(time)
+        outputFormat.format(date ?: time)
+    } catch (e: Exception) {
+        time
+    }
 }

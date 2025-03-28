@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 @Entity("alert")
 data class Alert (
     @PrimaryKey(autoGenerate = true)
-    val alertId:Long = 0,
+    var alertId:Long = 0,
     val cityName:String,
     val time:String,
 )

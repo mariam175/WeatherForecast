@@ -24,4 +24,7 @@ class CitiesLocalDataSource (val dao: FavCitiesDao){
     suspend fun deleteAlert(alert: Alert):Int{
         return dao.deleteAlert(alert)
     }
+     fun getAlertById(id:Long):Flow<Alert>{
+        return dao.getAlertById(id)
+    }
 }

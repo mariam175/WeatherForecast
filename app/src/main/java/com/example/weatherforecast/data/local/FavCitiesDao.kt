@@ -23,4 +23,6 @@ interface FavCitiesDao {
     suspend fun addAlert(alert: Alert):Long
     @Delete
     suspend fun deleteAlert(alert: Alert):Int
+    @Query("SELECT * FROM alert where alertId = :id")
+     fun getAlertById(id:Long):Flow<Alert>
 }

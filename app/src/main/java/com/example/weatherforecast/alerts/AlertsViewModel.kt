@@ -13,6 +13,7 @@ import com.example.weatherforecast.data.model.Alert
 import com.example.weatherforecast.data.model.WeatherResponse
 import com.example.weatherforecast.data.reopsitry.Repositry
 import com.example.weatherforecast.utils.SettingsChanges
+import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -39,11 +40,12 @@ class AlertsViewModel(val repositry: Repositry , val context: Context):ViewModel
         lon = res.second
     }
 
-    fun scheduleWeatherNotification(context: Context, selectedTime: Calendar) {
+    fun scheduleWeatherNotification(context: Context, selectedTime: Calendar , alertId:Long) {
         getCurrentLoction()
         val workData = workDataOf(
             "LATITUDE" to lat,
-            "LONGITUDE" to lon
+            "LONGITUDE" to lon,
+            "AlERT" to alertId
         )
         val delay = selectedTime.timeInMillis - System.currentTimeMillis()
 
@@ -52,7 +54,6 @@ class AlertsViewModel(val repositry: Repositry , val context: Context):ViewModel
                 .setInputData(workData)
                 .setInitialDelay(delay, TimeUnit.MILLISECONDS)
                 .build()
-
             WorkManager.getInstance(context).enqueue(workRequest)
             Log.i("TAG", "scheduleWeatherNotification: ")
         }
@@ -69,11 +70,13 @@ class AlertsViewModel(val repositry: Repositry , val context: Context):ViewModel
                 }
         }
     }
-    fun addAlert(alert: Alert){
+    fun addAlert(alert: Alert , onAlertAdded: (Long) -> Unit){
         viewModelScope.launch (Dispatchers.IO){
             val res = repositry.addAlert(alert)
             if (res > 0){
                 _message.emit("Added Successfully")
+                onAlertAdded(res)
+                Log.i("TAG", "addAlert: $res")
             }
             else{
                 _message.emit("Already Added")

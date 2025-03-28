@@ -33,4 +33,7 @@ class Repositry(val weatherRemoteDataSource: WeatherRemoteDataSource , val cityL
     suspend fun deleteAlert(alert: Alert):Int{
         return cityLocalDataSource.deleteAlert(alert)
     }
+     fun getAlertById(id:Long):Flow<Alert>{
+        return cityLocalDataSource.getAlertById(id)
+    }
 }
