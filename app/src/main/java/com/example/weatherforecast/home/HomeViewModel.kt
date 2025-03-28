@@ -83,6 +83,12 @@ class HomeViewModel(val repo:Repositry , val context: Context) : ViewModel() {
     fun getLocatioType():String{
        return SettingsChanges.getLocationType(context)
     }
+    fun saveCurrentLocation(lat: Double , lon: Double , context: Context){
+        SettingsChanges.saveCurrentLocation(context , lat , lon)
+    }
+    fun saveCurrentCity(city:String){
+        SettingsChanges.saveCurrentCity(context , city)
+    }
 }
 
 class HomeViewModelFactory(val repo: Repositry , val con: Context) : ViewModelProvider.Factory{

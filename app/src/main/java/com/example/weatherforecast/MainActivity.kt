@@ -39,8 +39,9 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.example.weatherforecast.alerts.AlertsScreen
+import com.example.weatherforecast.alerts.AlertsViewModelFactory
 import com.example.weatherforecast.data.local.CitiesLocalDataSource
-import com.example.weatherforecast.data.local.FavDataBase
+import com.example.weatherforecast.data.local.WeatherDataBase
 import com.example.weatherforecast.data.remote.RetrofitHelper
 import com.example.weatherforecast.data.remote.WeatherRemoteDataSource
 import com.example.weatherforecast.data.reopsitry.Repositry
@@ -215,7 +216,7 @@ class MainActivity : ComponentActivity() {
                                 RetrofitHelper.weatherServices
                             ),
                             CitiesLocalDataSource(
-                                FavDataBase.getInstance(context).getFavDao()
+                                WeatherDataBase.getInstance(context).getFavDao()
                             )
                         ),context
                     )
@@ -231,14 +232,26 @@ class MainActivity : ComponentActivity() {
                                     RetrofitHelper.weatherServices
                                 ),
                                 CitiesLocalDataSource(
-                                    FavDataBase.getInstance(context).getFavDao()
+                                    WeatherDataBase.getInstance(context).getFavDao()
                                 )
                             )
                         )
                     ))
             }
             composable<NavigationRoutes.Alerts>() {
-                AlertsScreen(navHostController)
+                AlertsScreen(navHostController , viewModel(
+                    factory = AlertsViewModelFactory(
+                        Repositry(
+                            WeatherRemoteDataSource(
+                                RetrofitHelper.weatherServices
+                            ),
+                            CitiesLocalDataSource(
+                                WeatherDataBase.getInstance(context).getFavDao()
+                            )
+                        ),context
+                    )
+                    )
+                )
             }
             composable<NavigationRoutes.Settings>() {
 
@@ -258,7 +271,7 @@ class MainActivity : ComponentActivity() {
                                     RetrofitHelper.weatherServices
                                 ),
                                 CitiesLocalDataSource(
-                                    FavDataBase.getInstance(context).getFavDao()
+                                    WeatherDataBase.getInstance(context).getFavDao()
                                 )
                             )
                         )

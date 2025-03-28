@@ -50,7 +50,7 @@ fun SettingsScreen(navHostController: NavHostController , settingsViewModel: Set
         verticalArrangement = Arrangement.Center
     ){
         SettingsComponent(context , settingsViewModel){
-            navHostController.navigate(NavigationRoutes.MapScreen)
+            navHostController.navigate(NavigationRoutes.MapScreen(isFav = false))
         }
     }
 }

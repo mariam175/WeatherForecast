@@ -74,15 +74,19 @@ import com.google.android.gms.location.Priority
         homeViewModel.getWindSpeed()
         val mapLocation = homeViewModel.getLocationFromPref()
         val locType = homeViewModel.getLocatioType()
+        val context = LocalContext.current
          LaunchedEffect (gpsLocation , lang , unit){
             when(locType){
                 "gps"->{
                     homeViewModel.getCurrentWeather(lat = gpsLocation.latitude , lon = gpsLocation.longitude , lang = lang , unit=unit)
                     homeViewModel.getDailyWeather(lat = gpsLocation.latitude , lon = gpsLocation.longitude , lang=lang , unit=unit)
+                    homeViewModel.saveCurrentLocation(gpsLocation.latitude , gpsLocation.longitude , context)
+                    Log.i("TAG", "gps Loc:")
                 }
                 "map"->{
                     homeViewModel.getCurrentWeather(lat = mapLocation.first , lon = mapLocation.second , lang = lang , unit=unit)
                     homeViewModel.getDailyWeather(lat = mapLocation.first , lon = mapLocation.second , lang=lang , unit=unit)
+                    homeViewModel.saveCurrentLocation(mapLocation.first ,  mapLocation.second , context)
                     Log.i("TAG", "Map Loc: ${mapLocation.first} ${mapLocation.second}")
                 }
             }
@@ -107,6 +111,7 @@ import com.google.android.gms.location.Priority
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     CurrentWeather(currentWeather , windSpeed , unitSymbole)
+                    homeViewModel.saveCurrentCity(currentWeather.name)
                     if (dailyState is DailyWeatherResponse.Success) {
                         val dailyWeather = (dailyState as DailyWeatherResponse.Success).data
                         Spacer(modifier = Modifier.height(16.dp))
