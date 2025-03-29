@@ -53,6 +53,7 @@ class AlertsViewModel(val repositry: Repositry , val context: Context):ViewModel
             val workRequest = OneTimeWorkRequestBuilder<AlertWorker>()
                 .setInputData(workData)
                 .setInitialDelay(delay, TimeUnit.MILLISECONDS)
+                .addTag("alert no.$alertId")
                 .build()
             WorkManager.getInstance(context).enqueue(workRequest)
             Log.i("TAG", "scheduleWeatherNotification: ")
@@ -85,9 +86,11 @@ class AlertsViewModel(val repositry: Repositry , val context: Context):ViewModel
     }
     fun deleteAlert(alert: Alert){
         viewModelScope.launch (Dispatchers.IO){
+            val id = alert.alertId
             val res = repositry.deleteAlert(alert)
             if (res > 0){
                 _message.emit("deleted Successfully")
+                WorkManager.getInstance(context).cancelAllWorkByTag("alert no.$id")
             }
             else{
                 _message.emit("Fail to delete")

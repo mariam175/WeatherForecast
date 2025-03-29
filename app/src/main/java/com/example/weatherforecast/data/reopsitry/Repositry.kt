@@ -38,4 +38,17 @@ class Repositry(val weatherRemoteDataSource: IWeatherRemoteDataSource, val weath
      fun getAlertById(id:Long):Flow<Alert>{
         return weatherLocalDataSource.getAlertById(id)
     }
+     suspend fun saveCurrentWeather(currentWeather: CurrentWeather): Long {
+        return weatherLocalDataSource.saveCurrentWeather(currentWeather)
+    }
+
+     fun getCurrentWeather(): Flow<CurrentWeather> {
+        return weatherLocalDataSource.getCurrentWeather()
+    }
+     fun getDailyAndHourly():Flow<DailyAndHourlyWeather>{
+        return weatherLocalDataSource.getDailyAndHourly()
+    }
+     suspend fun saveDailyAndHourly(dailyAndHourlyWeatherEntity: DailyAndHourlyWeather):Long{
+        return weatherLocalDataSource.saveDailyAndHourly(dailyAndHourlyWeatherEntity)
+    }
 }

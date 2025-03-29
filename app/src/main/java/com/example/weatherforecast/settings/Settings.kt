@@ -69,8 +69,8 @@ fun SettingsComponent(context: Context,settingsViewModel: SettingsViewModel , na
     val temperatureKey = stringResource(R.string.Temperature)
     val speedKey = stringResource(R.string.Windspeed)
     val locKey = stringResource(R.string.Location)
-    selectedItems["Language"] = currLang
-    selectedItems["Temperature"] = currentUnit
+    selectedItems[languageKey] = currLang
+    selectedItems[temperatureKey] = currentUnit
     selectedItems[locKey] = if (currType == "gps") "GPS" else stringResource(R.string.Map)
 
     val currSpeed = settingsViewModel.geWindSpeed(context)

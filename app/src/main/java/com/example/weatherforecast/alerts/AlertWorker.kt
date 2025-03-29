@@ -10,6 +10,7 @@ import com.example.weatherforecast.data.local.WeatherDataBase
 import com.example.weatherforecast.data.remote.RetrofitHelper
 import com.example.weatherforecast.data.remote.WeatherRemoteDataSource
 import com.example.weatherforecast.data.reopsitry.Repositry
+import com.example.weatherforecast.utils.CheckNetwork
 import com.example.weatherforecast.utils.Notification
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
@@ -30,16 +31,21 @@ class AlertWorker(context: Context,
             WeatherRemoteDataSource(RetrofitHelper.weatherServices),
             WeatherLocalDataSource(WeatherDataBase.getInstance(applicationContext).getFavDao())
         )
-        val curr = repo.getCurrentWeather(lat , lon)
         val alert = withContext(Dispatchers.IO) { repo.getAlertById(alertId).firstOrNull() }
         Log.i("TAG", "doWork: ${alert?.alertId?:0} - $alertId")
-            curr
+        val isConnected = CheckNetwork.checkNetwork(applicationContext)
+       if (isConnected){
+           val curr = repo.getCurrentWeather(lat , lon)
+           curr
                .catch {
                    Result.failure()
                }
                .collect{
-              Notification.showNotification("its ${it.weather.get(0).description} in ${it.name}" , applicationContext)
-           }
+                   Notification.showNotification("its ${it.weather.get(0).description} in ${it.name}" , applicationContext)
+               }
+       }else{
+           Notification.showNotification("Please open Network to check the weather" , applicationContext)
+       }
         withContext(Dispatchers.IO) {
             if(alert != null){
                 val del = repo.deleteAlert(alert)

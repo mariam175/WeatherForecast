@@ -1,6 +1,7 @@
 package com.example.weatherforecast.home
 
 
+import android.annotation.SuppressLint
 import android.location.Location
 import android.util.Log
 import androidx.compose.foundation.Image
@@ -55,6 +56,7 @@ import com.example.weatherforecast.data.model.WeatherResponse
 import com.example.weatherforecast.data.remote.RetrofitHelper
 import com.example.weatherforecast.data.remote.WeatherRemoteDataSource
 import com.example.weatherforecast.data.reopsitry.Repositry
+import com.example.weatherforecast.utils.CheckNetwork
 import com.example.weatherforecast.utils.ICON_URL
 import com.example.weatherforecast.utils.convertDate
 
@@ -67,6 +69,7 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 
 
+@SuppressLint("SuspiciousIndentation")
 @Composable
     fun Home(navHostController: NavHostController,homeViewModel: HomeViewModel , gpsLocation: Location) {
         val lang = homeViewModel.getLanguage()
@@ -75,23 +78,27 @@ import com.google.android.gms.location.Priority
         val mapLocation = homeViewModel.getLocationFromPref()
         val locType = homeViewModel.getLocatioType()
         val context = LocalContext.current
-         LaunchedEffect (gpsLocation , lang , unit){
-            when(locType){
-                "gps"->{
-                    homeViewModel.getCurrentWeather(lat = gpsLocation.latitude , lon = gpsLocation.longitude , lang = lang , unit=unit)
-                    homeViewModel.getDailyWeather(lat = gpsLocation.latitude , lon = gpsLocation.longitude , lang=lang , unit=unit)
-                    homeViewModel.saveCurrentLocation(gpsLocation.latitude , gpsLocation.longitude , context)
-                    Log.i("TAG", "gps Loc:")
-                }
-                "map"->{
-                    homeViewModel.getCurrentWeather(lat = mapLocation.first , lon = mapLocation.second , lang = lang , unit=unit)
-                    homeViewModel.getDailyWeather(lat = mapLocation.first , lon = mapLocation.second , lang=lang , unit=unit)
-                    homeViewModel.saveCurrentLocation(mapLocation.first ,  mapLocation.second , context)
-                    Log.i("TAG", "Map Loc: ${mapLocation.first} ${mapLocation.second}")
-                }
-            }
-             Log.i("TAG", "Home: $lang")
-         }
+       if(CheckNetwork.checkNetwork(context)){
+           LaunchedEffect (gpsLocation , lang , unit){
+               when(locType){
+                   "gps"->{
+                       if (gpsLocation.latitude != 0.0 && gpsLocation.longitude != 0.0) {
+                           homeViewModel.getCurrentWeather(lat = gpsLocation.latitude , lon = gpsLocation.longitude , lang = lang , unit=unit)
+                           homeViewModel.getDailyWeather(lat = gpsLocation.latitude , lon = gpsLocation.longitude , lang=lang , unit=unit)
+                           homeViewModel.saveCurrentLocation(gpsLocation.latitude , gpsLocation.longitude , context)
+                       }
+                   }
+                   "map"->{
+                       homeViewModel.getCurrentWeather(lat = mapLocation.first , lon = mapLocation.second , lang = lang , unit=unit)
+                       homeViewModel.getDailyWeather(lat = mapLocation.first , lon = mapLocation.second , lang=lang , unit=unit)
+                       homeViewModel.saveCurrentLocation(mapLocation.first ,  mapLocation.second , context)
+                   }
+               }
+           }
+       }
+    else{
+        homeViewModel.loadOfflineWeather()
+       }
 
         val weatherState by homeViewModel.currentWeather.collectAsState()
         val dailyState by homeViewModel.dailyWeather.collectAsState()
@@ -103,6 +110,7 @@ import com.google.android.gms.location.Priority
             }
             is WeatherResponse.Success -> {
                 val currentWeather = (weatherState as WeatherResponse.Success).data
+               homeViewModel.saveCurrentWeather(currentWeather)
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -114,8 +122,9 @@ import com.google.android.gms.location.Priority
                     homeViewModel.saveCurrentCity(currentWeather.name)
                     if (dailyState is DailyWeatherResponse.Success) {
                         val dailyWeather = (dailyState as DailyWeatherResponse.Success).data
+                            homeViewModel.saveDailyAndHourlyWeather(dailyWeather)
                         Spacer(modifier = Modifier.height(16.dp))
-                        DailyList(dailyWeather)
+                        DailyList(dailyWeather , unitSymbole)
                     }
                 }
             }
@@ -239,7 +248,7 @@ import com.google.android.gms.location.Priority
     }
 
     @Composable
-    fun DailyList(weather: DailyAndHourlyWeather) {
+    fun DailyList(weather: DailyAndHourlyWeather , sympole: String) {
         val groupedByDay = weather.list.groupBy { convertDate(it.dt) }
         val todayHours = groupedByDay.get(convertDate(weather.list.get(0).dt))
         val days = groupedByDay.keys.toList()
@@ -252,7 +261,7 @@ import com.google.android.gms.location.Priority
                horizontalArrangement = Arrangement.spacedBy(12.dp)
            ) {
                items(todayHours?.size?:0) {
-                   HourlyItem(todayHours!!.get(it))
+                   HourlyItem(todayHours!!.get(it) , sympole)
                }
            }
            Spacer(modifier = Modifier.height(16.dp))
@@ -265,7 +274,7 @@ import com.google.android.gms.location.Priority
            ){
                days.forEach {
                    val day = groupedByDay.get(it)!!
-                   DailyItem(it , day)
+                   DailyItem(it , day , sympole)
                }
            }
        }
@@ -274,7 +283,7 @@ import com.google.android.gms.location.Priority
     }
     @OptIn(ExperimentalGlideComposeApi::class)
     @Composable
-    fun HourlyItem(forecast: CurrentWeather) {
+    fun HourlyItem(forecast: CurrentWeather , sympole: String) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
@@ -292,14 +301,14 @@ import com.google.android.gms.location.Priority
                 modifier = Modifier.size(40.dp)
             )
             Text(
-                text = "${forecast.main.temp.toInt()}°C",
+                text = "${forecast.main.temp.toInt()}°$sympole",
                 fontSize = 16.sp
             )
         }
     }
     @OptIn(ExperimentalGlideComposeApi::class)
     @Composable
-    fun DailyItem(day : String , forecast: List<CurrentWeather>) {
+    fun DailyItem(day : String , forecast: List<CurrentWeather> , sympole: String) {
         Row(
             modifier = Modifier
                 .fillMaxSize()
@@ -318,7 +327,7 @@ import com.google.android.gms.location.Priority
                 modifier = Modifier.size(40.dp)
             )
             Text(
-                text = "${forecast.get(0).main.temp_min.toInt()}°C/${forecast.get(forecast.size - 1).main.temp_max.toInt()}°C",
+                text = "${forecast.get(0).main.temp_min.toInt()}°$sympole/${forecast.get(forecast.size - 1).main.temp_max.toInt()}°$sympole",
                 fontSize = 16.sp
             )
         }
