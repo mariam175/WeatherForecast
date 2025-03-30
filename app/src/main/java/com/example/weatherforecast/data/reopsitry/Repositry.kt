@@ -3,6 +3,7 @@ package com.example.weatherforecast.data.reopsitry
 import com.example.weatherforecast.data.local.IWeatherLocalDataSource
 import com.example.weatherforecast.data.local.WeatherLocalDataSource
 import com.example.weatherforecast.data.model.Alert
+import com.example.weatherforecast.data.model.CityWeather
 import com.example.weatherforecast.data.model.CurrentWeather
 import com.example.weatherforecast.data.model.DailyAndHourlyWeather
 import com.example.weatherforecast.data.model.Favourites
@@ -50,5 +51,14 @@ class Repositry(val weatherRemoteDataSource: IWeatherRemoteDataSource, val weath
     }
      suspend fun saveDailyAndHourly(dailyAndHourlyWeatherEntity: DailyAndHourlyWeather):Long{
         return weatherLocalDataSource.saveDailyAndHourly(dailyAndHourlyWeatherEntity)
+    }
+     fun getCityWeather(city:String):Flow<CityWeather>{
+        return weatherLocalDataSource.getCityWeather(city)
+    }
+     suspend fun saveCityWeather(cityWeather: CityWeather){
+        return weatherLocalDataSource.saveCityWeather(cityWeather)
+    }
+    suspend fun deleteCityWeather(cityWeather: CityWeather):Int{
+        return weatherLocalDataSource.deleteCityWeather(cityWeather)
     }
 }

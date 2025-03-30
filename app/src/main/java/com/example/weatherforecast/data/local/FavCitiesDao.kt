@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.weatherforecast.data.model.Alert
+import com.example.weatherforecast.data.model.CityWeather
 import com.example.weatherforecast.data.model.CurrentWeather
 import com.example.weatherforecast.data.model.DailyAndHourlyWeather
 import com.example.weatherforecast.data.model.Favourites
@@ -35,4 +36,11 @@ interface FavCitiesDao {
     fun getDailyAndHourly():Flow<DailyAndHourlyWeather>
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun saveDailyAndHourly(dailyAndHourlyWeatherEntity: DailyAndHourlyWeather):Long
+
+    @Query("SELECT * FROM cityWeather WHERE city =:city")
+    fun getCityWeather(city:String):Flow<CityWeather>
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun saveCityWeather(cityWeather: CityWeather)
+    @Delete
+    suspend fun deleteCityWeather(cityWeather: CityWeather):Int
 }

@@ -6,12 +6,12 @@ import androidx.room.PrimaryKey
 @Entity("current")
 data class CurrentWeather(
     @PrimaryKey
+    val currId:Int = 0,
     val id:Int,
     val name:String,
     val main:Temp,
     val weather:List<Weather>,
     val dt:Long,
-
     val wind: Wind,
 
 )

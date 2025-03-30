@@ -2,6 +2,7 @@ package com.example.weatherforecast.data.local
 
 import androidx.room.TypeConverter
 import com.example.weatherforecast.data.model.CurrentWeather
+import com.example.weatherforecast.data.model.DailyAndHourlyWeather
 import com.example.weatherforecast.data.model.Temp
 import com.example.weatherforecast.data.model.Weather
 import com.example.weatherforecast.data.model.Wind
@@ -41,5 +42,26 @@ class ListCurrentWeather{
     fun toCurrentWeatherList(data: String): List<CurrentWeather> {
         val type = object : TypeToken<List<CurrentWeather>>() {}.type
         return Gson().fromJson(data, type)
+    }
+    @TypeConverter
+    fun fromCurrentWeather(weather: CurrentWeather): String {
+        return Gson().toJson(weather)
+    }
+
+    @TypeConverter
+    fun toCurrentWeather(json: String): CurrentWeather {
+        val type = object : TypeToken<CurrentWeather>() {}.type
+        return Gson().fromJson(json, type)
+    }
+
+    @TypeConverter
+    fun fromDailyWeather(dailyWeather: DailyAndHourlyWeather): String {
+        return Gson().toJson(dailyWeather)
+    }
+
+    @TypeConverter
+    fun toDailyWeather(json: String): DailyAndHourlyWeather {
+        val type = object : TypeToken<DailyAndHourlyWeather>() {}.type
+        return Gson().fromJson(json, type)
     }
 }

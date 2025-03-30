@@ -1,6 +1,7 @@
 package com.example.weatherforecast.data.local
 
 import com.example.weatherforecast.data.model.Alert
+import com.example.weatherforecast.data.model.CityWeather
 import com.example.weatherforecast.data.model.CurrentWeather
 import com.example.weatherforecast.data.model.DailyAndHourlyWeather
 import com.example.weatherforecast.data.model.Favourites
@@ -42,5 +43,14 @@ class WeatherLocalDataSource (val dao: FavCitiesDao) : IWeatherLocalDataSource {
     }
     override suspend fun saveDailyAndHourly(dailyAndHourlyWeatherEntity: DailyAndHourlyWeather):Long{
         return dao.saveDailyAndHourly(dailyAndHourlyWeatherEntity)
+    }
+    override fun getCityWeather(city:String):Flow<CityWeather>{
+        return dao.getCityWeather(city)
+    }
+    override suspend fun saveCityWeather(cityWeather: CityWeather){
+        return dao.saveCityWeather(cityWeather)
+    }
+    override suspend fun deleteCityWeather(cityWeather: CityWeather):Int{
+        return dao.deleteCityWeather(cityWeather)
     }
 }

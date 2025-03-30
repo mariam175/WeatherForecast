@@ -6,11 +6,12 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.weatherforecast.data.model.Alert
+import com.example.weatherforecast.data.model.CityWeather
 import com.example.weatherforecast.data.model.CurrentWeather
 import com.example.weatherforecast.data.model.DailyAndHourlyWeather
 import com.example.weatherforecast.data.model.Favourites
 
-@Database(entities = [Favourites::class  , Alert::class , CurrentWeather::class , DailyAndHourlyWeather::class], version = 3,exportSchema = false)
+@Database(entities = [Favourites::class  , Alert::class , CurrentWeather::class , DailyAndHourlyWeather::class , CityWeather::class], version = 5,exportSchema = false)
 @TypeConverters(TempConverter::class, WeatherConverter::class, WindConverter::class , ListCurrentWeather::class)
 abstract class WeatherDataBase : RoomDatabase() {
 abstract fun getFavDao():FavCitiesDao
