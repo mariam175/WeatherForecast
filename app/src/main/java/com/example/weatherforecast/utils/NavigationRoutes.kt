@@ -30,4 +30,9 @@ sealed class NavigationRoutes(
         title = "",
         icon = 0
     )
+    @Serializable
+    class FavCitiesWeather(val lat:Double , val lon:Double , val city:String):NavigationRoutes(
+        title = "",
+        icon = 0
+    )
 }

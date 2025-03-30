@@ -2,7 +2,9 @@ package com.example.weatherforecast.data.local
 
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
+import androidx.room.Query
 import com.example.weatherforecast.data.model.Alert
+import com.example.weatherforecast.data.model.CityWeather
 import com.example.weatherforecast.data.model.CurrentWeather
 import com.example.weatherforecast.data.model.DailyAndHourlyWeather
 import com.example.weatherforecast.data.model.Favourites
@@ -22,4 +24,7 @@ interface IWeatherLocalDataSource {
     fun getCurrentWeather(): Flow<CurrentWeather>
     fun getDailyAndHourly():Flow<DailyAndHourlyWeather>
     suspend fun saveDailyAndHourly(dailyAndHourlyWeatherEntity: DailyAndHourlyWeather):Long
+    fun getCityWeather(city:String):Flow<CityWeather>
+    suspend fun saveCityWeather(cityWeather: CityWeather)
+    suspend fun deleteCityWeather(cityWeather: CityWeather):Int
 }

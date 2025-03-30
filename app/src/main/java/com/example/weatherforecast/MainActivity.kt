@@ -46,7 +46,8 @@ import com.example.weatherforecast.data.remote.RetrofitHelper
 import com.example.weatherforecast.data.remote.WeatherRemoteDataSource
 import com.example.weatherforecast.data.reopsitry.Repositry
 import com.example.weatherforecast.favourites.FavouriteViewModelFactory
-import com.example.weatherforecast.favourites.FavouritesScreen
+import com.example.weatherforecast.favourites.view.FavCitiesWeather
+import com.example.weatherforecast.favourites.view.FavouritesScreen
 import com.example.weatherforecast.home.Home
 import com.example.weatherforecast.home.HomeViewModelFactory
 import com.example.weatherforecast.map.MapScreen
@@ -277,6 +278,26 @@ class MainActivity : ComponentActivity() {
                         )
                     ) ,
                     context , isFav)
+            }
+            composable<NavigationRoutes.FavCitiesWeather>() {
+                    backStackEntry->
+                val lat = backStackEntry.toRoute<NavigationRoutes.FavCitiesWeather>().lat
+                val lon = backStackEntry.toRoute<NavigationRoutes.FavCitiesWeather>().lon
+                val city = backStackEntry.toRoute<NavigationRoutes.FavCitiesWeather>().city
+                FavCitiesWeather(navHostController ,
+                    viewModel(
+                        factory = FavouriteViewModelFactory(
+                            Repositry(
+                                WeatherRemoteDataSource(
+                                    RetrofitHelper.weatherServices
+                                ),
+                                WeatherLocalDataSource(
+                                    WeatherDataBase.getInstance(context).getFavDao()
+                                )
+                            )
+                        )
+                    ) ,
+                    lat , lon , city)
             }
         }
     }
