@@ -19,6 +19,8 @@
     <string name="kelvin">kelvin</string>
     <string name="Fahrenheit">Fahrenheit</string>
     <string name="mileh">mile/h</string>
+    <string name="Enable">Enable</string>
+    <string name="Disable">Disable</string>
     <string name="error_loading_weather">Error loading weather data</string>
     <string name="title_activity_my_application">MyApplication</string>
 

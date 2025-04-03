@@ -51,6 +51,7 @@ import com.example.weatherforecast.favourites.view.FavouritesScreen
 import com.example.weatherforecast.home.Home
 import com.example.weatherforecast.home.HomeViewModelFactory
 import com.example.weatherforecast.map.MapScreen
+import com.example.weatherforecast.map.MapScreenOSM
 import com.example.weatherforecast.map.MapViewModelFactory
 import com.example.weatherforecast.settings.SettingsScreen
 import com.example.weatherforecast.utils.SettingsChanges

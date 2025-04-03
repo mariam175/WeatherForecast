@@ -23,6 +23,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -45,6 +46,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import coil.compose.rememberAsyncImagePainter
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.bumptech.glide.integration.compose.RequestState
@@ -58,6 +60,7 @@ import com.example.weatherforecast.data.remote.WeatherRemoteDataSource
 import com.example.weatherforecast.data.reopsitry.Repositry
 import com.example.weatherforecast.utils.CheckNetwork
 import com.example.weatherforecast.utils.ICON_URL
+import com.example.weatherforecast.utils.WeatherConditions
 import com.example.weatherforecast.utils.convertDate
 
 import com.example.weatherforecast.utils.convertToHour
@@ -67,7 +70,6 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
-
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
@@ -175,7 +177,7 @@ import com.google.android.gms.location.Priority
                 fontStyle = FontStyle.Italic
             )
             GlideImage(
-                model = ICON_URL + weather.weather.get(0).icon + ".png",
+                model = WeatherConditions.getWeatherConditions(weather.weather.get(0).icon),
                 contentDescription = "",
                 Modifier.size(60.dp)
             )

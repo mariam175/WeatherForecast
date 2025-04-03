@@ -69,12 +69,14 @@ fun SettingsComponent(context: Context,settingsViewModel: SettingsViewModel , na
     val temperatureKey = stringResource(R.string.Temperature)
     val speedKey = stringResource(R.string.Windspeed)
     val locKey = stringResource(R.string.Location)
+    val notifi = stringResource(R.string.Notification)
     selectedItems[languageKey] = currLang
     selectedItems[temperatureKey] = currentUnit
     selectedItems[locKey] = if (currType == "gps") "GPS" else stringResource(R.string.Map)
-
     val currSpeed = settingsViewModel.geWindSpeed(context)
+    val isNotifiEnable = settingsViewModel.getIsNotificationEnable(context)
     selectedItems[speedKey] = currSpeed
+    selectedItems[notifi] = if(isNotifiEnable) stringResource(R.string.Enable) else stringResource(R.string.Disable)
     LazyColumn(modifier = Modifier.fillMaxSize().padding(16.dp)) {
         sections.forEach { (title, pair) ->
             item {
@@ -147,6 +149,11 @@ fun SettingsComponent(context: Context,settingsViewModel: SettingsViewModel , na
                                                         nav.invoke()
                                                     }
                                                 }
+                                                notifi->{
+                                                    val isEnable = if (item == context.getString(R.string.Enable)) true else false
+                                                    settingsViewModel.isNotificationEnable(context , isEnable)
+
+                                                }
                                             }
                                         }
                                     )
@@ -178,7 +185,9 @@ fun ListOfOptions() :  List<Pair<String, Pair<Int, List<String>>>>{
             )),
         stringResource(R.string.Windspeed) to Pair(R.drawable.windsetting ,
             listOf(stringResource(R.string.unit_m_s) , stringResource(R.string.mileh))),
-        stringResource(R.string.Notification) to Pair(R.drawable.bell , emptyList())
+        stringResource(R.string.Notification) to Pair(R.drawable.bell ,
+            listOf(stringResource(R.string.Enable) ,
+                stringResource(R.string.Disable))),
     )
     return sections
 }

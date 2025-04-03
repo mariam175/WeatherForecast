@@ -29,4 +29,10 @@ class SettingsViewModel() : ViewModel() {
     fun getLocationType(context: Context):String{
         return SettingsChanges.getLocationType(context)
     }
+    fun isNotificationEnable(context: Context , isEnable:Boolean){
+        SettingsChanges.isNotificationEnable(context, isEnable)
+    }
+    fun getIsNotificationEnable(context: Context):Boolean{
+        return SettingsChanges.getIsNotificationEnable(context)
+    }
 }
