@@ -19,6 +19,8 @@
     <string name="kelvin">كلفن</string>
     <string name="Fahrenheit">فهرنهايت</string>
     <string name="mileh">ميل/س</string>
+    <string name="Enable">تفعيل</string>
+    <string name="Disable">تعطيل</string>
     <string name="error_loading_weather">خطأ جرب مرة اخرى</string>
 
 </resources>

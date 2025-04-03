@@ -1,12 +1,13 @@
 package com.example.weatherforecast
 
 import android.app.Application
+import android.preference.PreferenceManager
 import com.example.weatherforecast.utils.SettingsChanges
+import org.osmdroid.config.Configuration
 
 class MyApplication : Application() {
     override fun onCreate() {
         super.onCreate()
-        val languageCode = SettingsChanges.getLanguageCode(this)
-        SettingsChanges.applyLanguage(this, languageCode)
+        //Configuration.getInstance().load(this, PreferenceManager.getDefaultSharedPreferences(this))
     }
 }

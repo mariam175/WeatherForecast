@@ -17,6 +17,7 @@ object SettingsChanges {
     private const val CURRLAT = "currlat"
     private const val CURRLNG = "currlng"
     private const val CITY = "city"
+    private const val ENABLENOTIFY = "notifi"
     fun changeLanguage(context: Context, languageCode: String) {
         val preferences: SharedPreferences =
             context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -57,6 +58,16 @@ object SettingsChanges {
         val preferences: SharedPreferences =
             context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         preferences.edit().putString(SPEED, unit).apply()
+    }
+    fun getIsNotificationEnable(context: Context): Boolean {
+        val preferences: SharedPreferences =
+            context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        return preferences.getBoolean(ENABLENOTIFY, true) ?: true
+    }
+    fun isNotificationEnable(context: Context , isEnable:Boolean){
+        val preferences: SharedPreferences =
+            context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        preferences.edit().putBoolean(ENABLENOTIFY, isEnable).apply()
     }
     fun getWindSpeed(context: Context): String {
         val preferences: SharedPreferences =

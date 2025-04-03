@@ -74,15 +74,19 @@ fun AlertsScreen(navHostController: NavHostController , alertsViewModel: AlertsV
                     )
                 ,
                 onClick = {
-                    showDateTimePicker(context){ time->
-                        val alert =  Alert(
-                            cityName = alertsViewModel.getCurrentCity(),
-                            time = time.time.toString()
-                        )
-                        alertsViewModel.addAlert(alert){
-                            alertsViewModel.scheduleWeatherNotification(context , time , it)
+                    if(alertsViewModel.isEnableNotifi()){
+                        showDateTimePicker(context){ time->
+                            val alert =  Alert(
+                                cityName = alertsViewModel.getCurrentCity(),
+                                time = time.time.toString()
+                            )
+                            alertsViewModel.addAlert(alert){
+                                alertsViewModel.scheduleWeatherNotification(context , time , it)
+                            }
+                            Log.i("TAG", "AlertsScreen: ${alert.cityName}")
                         }
-                        Log.i("TAG", "AlertsScreen: ${alert.cityName}")
+                    }else{
+                        Toast.makeText(context,"You disabled Notification ... Enable it" , Toast.LENGTH_SHORT).show()
                     }
                 }
             ) {

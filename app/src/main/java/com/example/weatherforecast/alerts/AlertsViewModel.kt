@@ -101,6 +101,9 @@ class AlertsViewModel(val repositry: Repositry , val context: Context):ViewModel
         val res = SettingsChanges.getCurrentCity(context)
         return res
     }
+    fun isEnableNotifi():Boolean{
+        return SettingsChanges.getIsNotificationEnable(context)
+    }
 
 }
 class AlertsViewModelFactory(val repositry: Repositry , val context: Context) : ViewModelProvider.Factory{

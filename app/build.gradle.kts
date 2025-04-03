@@ -77,6 +77,7 @@ dependencies {
     implementation("com.google.android.gms:play-services-location:21.1.0")
     implementation("com.google.maps.android:maps-compose:4.3.3")
     implementation ("androidx.work:work-runtime-ktx:2.8.1")
+    implementation("org.osmdroid:osmdroid-android:6.1.16")
 
 
     val androidXVersion = "1.0.0"
@@ -143,4 +144,8 @@ dependencies {
     //MockK
     testImplementation( "io.mockk:mockk-android:1.13.17")
     testImplementation ("io.mockk:mockk-agent:1.13.17")
+    implementation("io.coil-kt:coil-compose:2.2.2")
+    implementation("io.coil-kt:coil-svg:2.2.2")
+
+
 }
