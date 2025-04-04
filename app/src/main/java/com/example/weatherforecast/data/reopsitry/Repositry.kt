@@ -7,8 +7,10 @@ import com.example.weatherforecast.data.model.CityWeather
 import com.example.weatherforecast.data.model.CurrentWeather
 import com.example.weatherforecast.data.model.DailyAndHourlyWeather
 import com.example.weatherforecast.data.model.Favourites
+import com.example.weatherforecast.data.model.SearchCity
 import com.example.weatherforecast.data.remote.IWeatherRemoteDataSource
 import com.example.weatherforecast.data.remote.WeatherRemoteDataSource
+import com.example.weatherforecast.utils.SEARCH_URL
 import kotlinx.coroutines.flow.Flow
 
 class Repositry(val weatherRemoteDataSource: IWeatherRemoteDataSource, val weatherLocalDataSource: IWeatherLocalDataSource) {
@@ -60,5 +62,8 @@ class Repositry(val weatherRemoteDataSource: IWeatherRemoteDataSource, val weath
     }
     suspend fun deleteCityWeather(cityWeather: CityWeather):Int{
         return weatherLocalDataSource.deleteCityWeather(cityWeather)
+    }
+    suspend fun searchCity(url :String = SEARCH_URL , query:String):Flow<List<SearchCity>>{
+         return weatherRemoteDataSource.searchCity(url , query)
     }
 }

@@ -54,6 +54,7 @@ import com.example.weatherforecast.map.MapScreen
 import com.example.weatherforecast.map.MapScreenOSM
 import com.example.weatherforecast.map.MapViewModelFactory
 import com.example.weatherforecast.settings.SettingsScreen
+import com.example.weatherforecast.ui.theme.WeatherForecastTheme
 import com.example.weatherforecast.utils.SettingsChanges
 import com.example.weatherforecast.utils.NavigationRoutes
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -77,7 +78,9 @@ class MainActivity : ComponentActivity() {
         setContent {
 
             remember { mutableStateOf( SettingsChanges.applyLanguage(this , lang.value)) }
-            AppScreen(loctState.value)
+           WeatherForecastTheme {
+               AppScreen(loctState.value)
+           }
         }
     }
     override fun onStart() {
@@ -265,7 +268,7 @@ class MainActivity : ComponentActivity() {
             composable<NavigationRoutes.MapScreen>() {
                 backStackEntry->
                 val isFav = backStackEntry.toRoute<NavigationRoutes.MapScreen>().isFav
-                MapScreen(navHostController ,
+                MapScreenOSM(navHostController ,
                     viewModel(
                         factory = MapViewModelFactory(
                             Repositry(
@@ -278,7 +281,7 @@ class MainActivity : ComponentActivity() {
                             )
                         )
                     ) ,
-                    context , isFav)
+                     isFav)
             }
             composable<NavigationRoutes.FavCitiesWeather>() {
                     backStackEntry->
