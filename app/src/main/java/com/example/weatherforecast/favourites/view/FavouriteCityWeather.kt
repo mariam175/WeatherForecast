@@ -43,7 +43,6 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.example.weatherforecast.R
 import com.example.weatherforecast.data.model.CurrentWeather
 import com.example.weatherforecast.data.model.DailyAndHourlyWeather
-import com.example.weatherforecast.data.model.DailyWeatherResponse
 import com.example.weatherforecast.data.model.WeatherResponse
 import com.example.weatherforecast.favourites.FavouritesViewModel
 import com.example.weatherforecast.utils.Helper
@@ -92,8 +91,8 @@ fun FavCitiesWeather(navHostController: NavHostController, favouritesViewModel: 
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 CurrentWeather(currentWeather , windSpeed , unitSymbole)
-                if (dailyState is DailyWeatherResponse.Success) {
-                    val dailyWeather = (dailyState as DailyWeatherResponse.Success).data
+                if (dailyState is WeatherResponse.Success<*>) {
+                    val dailyWeather = (dailyState as WeatherResponse.Success<DailyAndHourlyWeather>).data
                     favouritesViewModel.saveCityWeather(currentWeather , dailyWeather , city)
                     Spacer(modifier = Modifier.height(16.dp))
                     DailyList(dailyWeather , unitSymbole)

@@ -8,7 +8,6 @@ import androidx.lifecycle.viewModelScope
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
-import com.example.weatherforecast.data.local.AlertState
 import com.example.weatherforecast.data.model.Alert
 import com.example.weatherforecast.data.model.WeatherResponse
 import com.example.weatherforecast.data.reopsitry.Repositry
@@ -28,7 +27,7 @@ import kotlin.properties.Delegates
 class AlertsViewModel(val repositry: Repositry , val context: Context):ViewModel() {
     private val _currentWeather = MutableStateFlow<WeatherResponse>(WeatherResponse.Loading)
     val currentWeather  = _currentWeather.asStateFlow()
-    private val _alerts = MutableStateFlow<AlertState>(AlertState.Loading)
+    private val _alerts = MutableStateFlow<WeatherResponse>(WeatherResponse.Loading)
     val alerts = _alerts.asStateFlow()
     private val _message = MutableSharedFlow<String>()
     val messages = _message.asSharedFlow()
@@ -64,10 +63,10 @@ class AlertsViewModel(val repositry: Repositry , val context: Context):ViewModel
             val res = repositry.getAllAlert()
             res
                 .catch {
-                    e->_alerts.emit(AlertState.Failure(e))
+                    e->_alerts.emit(WeatherResponse.Failure(e))
                 }
                 .collect() {
-                    _alerts.emit(AlertState.Success(it))
+                    _alerts.emit(WeatherResponse.Success(it))
                 }
         }
     }

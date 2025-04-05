@@ -9,9 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.weatherforecast.R
 import com.example.weatherforecast.data.model.CurrentWeather
 import com.example.weatherforecast.data.model.DailyAndHourlyWeather
-import com.example.weatherforecast.data.model.DailyWeatherResponse
-import com.example.weatherforecast.data.model.Temp
-import com.example.weatherforecast.data.model.Weather
+
 import com.example.weatherforecast.data.model.WeatherResponse
 import com.example.weatherforecast.data.model.Wind
 import com.example.weatherforecast.data.reopsitry.Repositry
@@ -29,7 +27,7 @@ import kotlinx.coroutines.launch
 class HomeViewModel(val repo:Repositry , val context: Context) : ViewModel() {
     private val _currentWeather = MutableStateFlow<WeatherResponse>(WeatherResponse.Loading)
     val currentWeather = _currentWeather.asStateFlow()
-    private val _dailyWeather = MutableStateFlow<DailyWeatherResponse>(DailyWeatherResponse.Loading)
+    private val _dailyWeather = MutableStateFlow<WeatherResponse>(WeatherResponse.Loading)
     val dailyWeather = _dailyWeather.asStateFlow()
     private val _message = MutableSharedFlow<String>()
     val messages = _message.asSharedFlow()
@@ -87,10 +85,10 @@ class HomeViewModel(val repo:Repositry , val context: Context) : ViewModel() {
             val res = repo.getDailyWeather(lat = lat, lon = lon, lan = lang, unit = unit)
             res
                 .catch { error ->
-                    _dailyWeather.value = DailyWeatherResponse.Failure(error)
+                    _dailyWeather.value = WeatherResponse.Failure(error)
                 }
                 .collect {
-                    _dailyWeather.value = DailyWeatherResponse.Success(it)
+                    _dailyWeather.value = WeatherResponse.Success(it)
                 }
         }
     }
@@ -121,7 +119,7 @@ class HomeViewModel(val repo:Repositry , val context: Context) : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             val res = repo.getDailyAndHourly()
             res.collect{
-                _dailyWeather.emit(DailyWeatherResponse.Success(it))
+                _dailyWeather.emit(WeatherResponse.Success(it))
             }
         }
     }

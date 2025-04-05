@@ -3,7 +3,6 @@ package com.example.weatherforecast.home
 
 import android.annotation.SuppressLint
 import android.location.Location
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -44,7 +43,6 @@ import com.bumptech.glide.integration.compose.GlideImage
 import com.example.weatherforecast.R
 import com.example.weatherforecast.data.model.CurrentWeather
 import com.example.weatherforecast.data.model.DailyAndHourlyWeather
-import com.example.weatherforecast.data.model.DailyWeatherResponse
 import com.example.weatherforecast.data.model.WeatherResponse
 import com.example.weatherforecast.utils.Helper
 import com.example.weatherforecast.utils.ICON_URL
@@ -85,11 +83,11 @@ import kotlinx.coroutines.delay
            }
        }
     else{
+           homeViewModel.loadOfflineWeather()
           LaunchedEffect(Unit) {
               showNoInternet.value = true
                 delay(3000)
               showNoInternet.value = false
-              homeViewModel.loadOfflineWeather()
           }
        }
         if(showNoInternet.value){
@@ -115,8 +113,8 @@ import kotlinx.coroutines.delay
                 ) {
                     CurrentWeather(currentWeather , windSpeed , unitSymbole)
                     homeViewModel.saveCurrentCity(currentWeather.name)
-                    if (dailyState is DailyWeatherResponse.Success) {
-                        val dailyWeather = (dailyState as DailyWeatherResponse.Success).data
+                    if (dailyState is WeatherResponse.Success<*>) {
+                        val dailyWeather = (dailyState as WeatherResponse.Success<DailyAndHourlyWeather>).data
                             homeViewModel.saveDailyAndHourlyWeather(dailyWeather)
                         Spacer(modifier = Modifier.height(16.dp))
                         DailyList(dailyWeather , unitSymbole)

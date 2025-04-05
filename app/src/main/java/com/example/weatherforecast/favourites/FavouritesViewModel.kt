@@ -5,11 +5,10 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.example.weatherforecast.data.local.FavCititesState
+
 import com.example.weatherforecast.data.model.CityWeather
 import com.example.weatherforecast.data.model.CurrentWeather
 import com.example.weatherforecast.data.model.DailyAndHourlyWeather
-import com.example.weatherforecast.data.model.DailyWeatherResponse
 import com.example.weatherforecast.data.model.Favourites
 import com.example.weatherforecast.data.model.WeatherResponse
 import com.example.weatherforecast.data.reopsitry.Repositry
@@ -24,11 +23,11 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class FavouritesViewModel(val repo: Repositry) : ViewModel() {
-    private val _citites = MutableStateFlow<FavCititesState>(FavCititesState.Loading)
+    private val _citites = MutableStateFlow<WeatherResponse>(WeatherResponse.Loading)
     val cities = _citites.asStateFlow()
     private val _currentWeather = MutableStateFlow<WeatherResponse>(WeatherResponse.Loading)
     val currentWeather = _currentWeather.asStateFlow()
-    private val _dailyWeather = MutableStateFlow<DailyWeatherResponse>(DailyWeatherResponse.Loading)
+    private val _dailyWeather = MutableStateFlow<WeatherResponse>(WeatherResponse.Loading)
     val dailyWeather = _dailyWeather.asStateFlow()
     private val _message = MutableSharedFlow<String>()
     val messages = _message.asSharedFlow()
@@ -44,11 +43,11 @@ class FavouritesViewModel(val repo: Repositry) : ViewModel() {
            val res = repo.getAllFavCities()
            res
                .catch {
-                   e-> _citites.emit(FavCititesState.Failure(e))
+                   e-> _citites.emit(WeatherResponse.Failure(e))
                         _message.emit("Try Again")
                }
                .collect{
-                   _citites.emit(FavCititesState.Success(it))
+                   _citites.emit(WeatherResponse.Success(it))
                }
        }
     }
@@ -83,10 +82,10 @@ class FavouritesViewModel(val repo: Repositry) : ViewModel() {
             val res = repo.getDailyWeather(lat = lat, lon = lon, lan = lang, unit = unit)
             res
                 .catch { error ->
-                    _dailyWeather.value = DailyWeatherResponse.Failure(error)
+                    _dailyWeather.value = WeatherResponse.Failure(error)
                 }
                 .collect {
-                    _dailyWeather.value = DailyWeatherResponse.Success(it)
+                    _dailyWeather.value = WeatherResponse.Success(it)
                 }
         }
     }
@@ -133,7 +132,7 @@ class FavouritesViewModel(val repo: Repositry) : ViewModel() {
                 }
                 .collect{
                 _currentWeather.emit(WeatherResponse.Success(it.currentWeather))
-                _dailyWeather.emit(DailyWeatherResponse.Success(it.list))
+                _dailyWeather.emit(WeatherResponse.Success(it.list))
             }
         }
     }

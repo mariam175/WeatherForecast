@@ -46,8 +46,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.weatherforecast.R
-import com.example.weatherforecast.data.local.FavCititesState
 import com.example.weatherforecast.data.model.Favourites
+import com.example.weatherforecast.data.model.WeatherResponse
 import com.example.weatherforecast.favourites.FavouritesViewModel
 import com.example.weatherforecast.utils.NavigationRoutes
 import kotlinx.coroutines.launch
@@ -83,9 +83,9 @@ private fun Fav(favouritesViewModel: FavouritesViewModel, nav:()->Unit , navHost
          modifier = Modifier.fillMaxSize()
       ){
          when(cities){
-             is FavCititesState.Loading-> Loading()
-             is FavCititesState.Success ->{
-                 FavList((cities as FavCititesState.Success).data , favouritesViewModel , navHostController)
+             is WeatherResponse.Loading-> Loading()
+             is WeatherResponse.Success<*> ->{
+                 FavList((cities as WeatherResponse.Success<List<Favourites>>).data , favouritesViewModel , navHostController)
              }
              else->{
                  Text("Try...Again")
