@@ -50,8 +50,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.weatherforecast.R
-import com.example.weatherforecast.data.local.AlertState
 import com.example.weatherforecast.data.model.Alert
+import com.example.weatherforecast.data.model.WeatherResponse
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
@@ -75,9 +75,9 @@ fun AlertsScreen(navHostController: NavHostController , alertsViewModel: AlertsV
             modifier = Modifier.fillMaxSize()
         ){
             when(alerts){
-                is AlertState.Loading-> Loading()
-                is AlertState.Success ->{
-                    AlertList((alerts as AlertState.Success).data , alertsViewModel)
+                is WeatherResponse.Loading-> Loading()
+                is WeatherResponse.Success<*> ->{
+                    AlertList((alerts as WeatherResponse.Success<List<Alert>>).data , alertsViewModel)
                 }
                 else->{
                     Text("Try...Again")

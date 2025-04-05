@@ -5,7 +5,6 @@ import android.location.Geocoder
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.example.weatherforecast.data.local.FavCititesState
 import com.example.weatherforecast.data.model.Favourites
 import com.example.weatherforecast.data.model.SearchCity
 import com.example.weatherforecast.data.model.SearchResponse
