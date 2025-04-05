@@ -13,7 +13,7 @@ import com.example.weatherforecast.data.model.Favourites
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface FavCitiesDao {
+interface WeatherDao {
     @Query("SELECT * FROM favouriteCities")
     fun getAllFavCities(): Flow<List<Favourites>>
     @Insert(onConflict = OnConflictStrategy.IGNORE)

@@ -40,12 +40,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.weatherforecast.R
+import com.example.weatherforecast.utils.Helper
 import com.example.weatherforecast.utils.NavigationRoutes
+import com.example.weatherforecast.utils.NoInternetDialog
 
 @Composable
 fun SettingsScreen(navHostController: NavHostController , settingsViewModel: SettingsViewModel , context: Context) {
+
     Column (
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
             .padding(top = 40.dp),
         verticalArrangement = Arrangement.Center
     ){
@@ -69,104 +73,113 @@ fun SettingsComponent(context: Context,settingsViewModel: SettingsViewModel , na
     val temperatureKey = stringResource(R.string.Temperature)
     val speedKey = stringResource(R.string.Windspeed)
     val locKey = stringResource(R.string.Location)
-    val notifi = stringResource(R.string.Notification)
     selectedItems[languageKey] = currLang
     selectedItems[temperatureKey] = currentUnit
     selectedItems[locKey] = if (currType == "gps") "GPS" else stringResource(R.string.Map)
     val currSpeed = settingsViewModel.geWindSpeed(context)
-    val isNotifiEnable = settingsViewModel.getIsNotificationEnable(context)
-    selectedItems[speedKey] = currSpeed
-    selectedItems[notifi] = if(isNotifiEnable) stringResource(R.string.Enable) else stringResource(R.string.Disable)
-    LazyColumn(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        sections.forEach { (title, pair) ->
-            item {
-                val (icon , items) = pair
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp)
-                        .clip(RoundedCornerShape(12.dp))
-                        .clickable {
-                            expandedStates[title] = !(expandedStates[title] ?: false)
+    selectedItems[speedKey] = if (currSpeed == "mile/h") {
+        context.getString(R.string.mileh)
+    } else {
+        context.getString(R.string.unit_m_s)
+    }
+    Column (
+        verticalArrangement = Arrangement.spacedBy(15.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ){
+        Text(
+            stringResource(R.string.Settings),
+            fontWeight = FontWeight.Bold,
+            fontSize = 22.sp
+        )
+
+        LazyColumn(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+            sections.forEach { (title, pair) ->
+                item {
+                    val (icon , items) = pair
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .clickable {
+                                expandedStates[title] = !(expandedStates[title] ?: false)
+                            }
+                            .padding(16.dp)
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                painter = painterResource(id = icon),
+                                contentDescription = null,
+                                modifier = Modifier.size(24.dp),
+                                tint = androidx.compose.ui.graphics.Color.Unspecified
+                            )
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Text(
+                                title,
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Bold)
+                            Spacer(modifier = Modifier.weight(1f))
+                            Icon(
+                                painter = painterResource(
+                                    id = if (expandedStates[title] == true)
+                                        R.drawable.arrow_up else R.drawable.arrow_down
+                                ),
+                                contentDescription = null,
+                                modifier = Modifier.size(20.dp),
+                                tint = MaterialTheme.colorScheme.onSurface
+                            )
                         }
-                        .padding(16.dp)
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            painter = painterResource(id = icon),
-                            contentDescription = null,
-                            modifier = Modifier.size(24.dp),
-                            tint = androidx.compose.ui.graphics.Color.Unspecified
-                        )
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Text(
-                            title,
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold)
-                        Spacer(modifier = Modifier.weight(1f))
-                        Icon(
-                            painter = painterResource(
-                                id = if (expandedStates[title] == true)
-                                 R.drawable.arrow_up else R.drawable.arrow_down
-                            ),
-                            contentDescription = null,
-                            modifier = Modifier.size(20.dp),
-                            tint = MaterialTheme.colorScheme.onSurface
-                        )
-                    }
 
 
-                    if (expandedStates[title] == true) {
-                        Column(modifier = Modifier.padding(
-                            start = 32.dp,
-                            top = 8.dp)) {
-                            items.forEach { item ->
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    RadioButton(
-                                        selected = selectedItems[title] == item,
-                                        onClick = {
-                                            selectedItems[title] = item
-                                            when (title) {
-                                                languageKey -> {
-                                                    val code = if (item == context.getString(R.string.Arabic)) "ar" else "en"
-                                                    settingsViewModel.changeLanguage(context, code)
-                                                }
-                                                temperatureKey -> {
-                                                    val unit = changeTempUnit(item, context)
-                                                    settingsViewModel.changeUnit(context, unit)
-                                                    val newSpeed = changeWindSpeed(item, context)
-                                                    selectedItems[speedKey] = newSpeed
-                                                    settingsViewModel.changeWindSpeed(context, newSpeed)
-                                                }
-                                                speedKey->{
+                        if (expandedStates[title] == true) {
+                            Column(modifier = Modifier.padding(
+                                start = 32.dp,
+                                top = 8.dp)) {
+                                items.forEach { item ->
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        RadioButton(
+                                            selected = selectedItems[title] == item,
+                                            onClick = {
+                                                selectedItems[title] = item
+                                                when (title) {
+                                                    languageKey -> {
+                                                        val code = if (item == context.getString(R.string.Arabic)) "ar" else "en"
+                                                        settingsViewModel.changeLanguage(context, code)
+                                                    }
+                                                    temperatureKey -> {
+                                                        val unit = changeTempUnit(item, context)
+                                                        settingsViewModel.changeUnit(context, unit)
+                                                        val newSpeed = changeWindSpeed(item, context)
+                                                        selectedItems[speedKey] = newSpeed
+                                                        settingsViewModel.changeWindSpeed(context, newSpeed)
+                                                    }
+                                                    speedKey->{
 //                                                    val speed = changeWindSpeed(temperatureKey , context)
 //                                                    settingsViewModel.changeWindSpeed(context , speed)
-                                                }
-                                                locKey->{
-                                                    val type = if (item == context.getString(R.string.Map)) "map" else "gps"
-                                                    settingsViewModel.changeLocationType(context, type)
-                                                    if (item == context.getString(R.string.Map)){
-                                                        nav.invoke()
                                                     }
-                                                }
-                                                notifi->{
-                                                    val isEnable = if (item == context.getString(R.string.Enable)) true else false
-                                                    settingsViewModel.isNotificationEnable(context , isEnable)
-
+                                                    locKey->{
+                                                        val type = if (item == context.getString(R.string.Map)) "map" else "gps"
+                                                        settingsViewModel.changeLocationType(context, type)
+                                                        if (item == context.getString(R.string.Map)){
+                                                            nav.invoke()
+                                                        }
+                                                    }
+//
                                                 }
                                             }
-                                        }
-                                    )
-                                    Text(item, modifier = Modifier.padding(start = 8.dp))
+                                        )
+                                        Text(item, modifier = Modifier.padding(start = 8.dp))
+                                    }
                                 }
-                            }
 
+                            }
                         }
                     }
                 }
             }
         }
     }
+
 }
 @Composable
 fun ListOfOptions() :  List<Pair<String, Pair<Int, List<String>>>>{
@@ -185,9 +198,6 @@ fun ListOfOptions() :  List<Pair<String, Pair<Int, List<String>>>>{
             )),
         stringResource(R.string.Windspeed) to Pair(R.drawable.windsetting ,
             listOf(stringResource(R.string.unit_m_s) , stringResource(R.string.mileh))),
-        stringResource(R.string.Notification) to Pair(R.drawable.bell ,
-            listOf(stringResource(R.string.Enable) ,
-                stringResource(R.string.Disable))),
     )
     return sections
 }

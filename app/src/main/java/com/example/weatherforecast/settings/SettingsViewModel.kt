@@ -1,7 +1,10 @@
 package com.example.weatherforecast.settings
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import androidx.lifecycle.ViewModel
+import com.example.weatherforecast.MainActivity
 import com.example.weatherforecast.utils.SettingsChanges
 
 class SettingsViewModel() : ViewModel() {
@@ -35,4 +38,5 @@ class SettingsViewModel() : ViewModel() {
     fun getIsNotificationEnable(context: Context):Boolean{
         return SettingsChanges.getIsNotificationEnable(context)
     }
+
 }

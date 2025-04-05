@@ -10,7 +10,7 @@ import com.example.weatherforecast.data.local.WeatherDataBase
 import com.example.weatherforecast.data.remote.RetrofitHelper
 import com.example.weatherforecast.data.remote.WeatherRemoteDataSource
 import com.example.weatherforecast.data.reopsitry.Repositry
-import com.example.weatherforecast.utils.CheckNetwork
+import com.example.weatherforecast.utils.Helper
 import com.example.weatherforecast.utils.Notification
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
@@ -33,7 +33,7 @@ class AlertWorker(context: Context,
         )
         val alert = withContext(Dispatchers.IO) { repo.getAlertById(alertId).firstOrNull() }
         Log.i("TAG", "doWork: ${alert?.alertId?:0} - $alertId")
-        val isConnected = CheckNetwork.checkNetwork(applicationContext)
+        val isConnected = Helper.checkNetwork(applicationContext)
        if (isConnected){
            val curr = repo.getCurrentWeather(lat , lon)
            curr

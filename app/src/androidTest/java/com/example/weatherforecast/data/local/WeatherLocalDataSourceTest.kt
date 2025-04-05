@@ -21,7 +21,7 @@ import org.junit.runner.RunWith
 @MediumTest
 class WeatherLocalDataSourceTest{
     private lateinit var database:WeatherDataBase
-    private lateinit var dao: FavCitiesDao
+    private lateinit var dao: WeatherDao
     private lateinit var localDataSource: WeatherLocalDataSource
     @Before
     fun setup(){

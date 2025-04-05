@@ -21,6 +21,15 @@
     <string name="mileh">ميل/س</string>
     <string name="Enable">تفعيل</string>
     <string name="Disable">تعطيل</string>
+    <string name="Home">الرئيسية</string>
+    <string name="Favourites">المفضلة</string>
+    <string name="Alerts">الاشعارات</string>
+    <string name="Settings">الاعدادات</string>
+    <string name="NoAlerts">لا يوجد اشعارات قادمة</string>
+    <string name="NoFavCities">لا يوجد مدن مفضلة</string>
+    <string name="no_internet_connection">لا يوجد اتصال بالانترنت</string>
+    <string name="Pressure">الضغط</string>
+    <string name="Humidity">الرطوبة</string>
     <string name="error_loading_weather">خطأ جرب مرة اخرى</string>
 
 </resources>

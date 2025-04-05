@@ -1,11 +1,14 @@
 package com.example.weatherforecast.utils
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
+import com.example.weatherforecast.MainActivity
 
-class CheckNetwork{
+class Helper{
     companion object{
         fun checkNetwork(context: Context) : Boolean{
             val connectivityManager =

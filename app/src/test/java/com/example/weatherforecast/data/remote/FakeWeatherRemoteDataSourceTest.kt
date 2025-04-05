@@ -1,9 +1,10 @@
 package com.example.weatherforecast.data.remote
 
-import com.example.weatherforecast.data.model.Clouds
+
 import com.example.weatherforecast.data.model.CurrentWeather
 import com.example.weatherforecast.data.model.DailyAndHourlyWeather
-import com.example.weatherforecast.data.model.Sys
+import com.example.weatherforecast.data.model.SearchCity
+
 import com.example.weatherforecast.data.model.Temp
 import com.example.weatherforecast.data.model.Weather
 import com.example.weatherforecast.data.model.Wind
@@ -30,17 +31,12 @@ class FakeWeatherRemoteDataSourceTest :IWeatherRemoteDataSource {
             )
         ),
         dt = 1711823400,
-        sys = Sys(
-            country = "US"
-        ),
+
         wind = Wind(
             speed = 5.5,
-            deg = 180,
-            gust = 7.2
+
         ),
-        clouds = Clouds(
-            all = 10
-        )
+
     )
     override fun getCurrentWeather(
         lat: Double,
@@ -63,6 +59,10 @@ class FakeWeatherRemoteDataSourceTest :IWeatherRemoteDataSource {
         lan: String,
         unit: String
     ): Flow<DailyAndHourlyWeather> {
+        TODO("Not yet implemented")
+    }
+
+    override fun searchCity(url: String, query: String): Flow<List<SearchCity>> {
         TODO("Not yet implemented")
     }
 }

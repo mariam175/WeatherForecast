@@ -8,7 +8,7 @@ import com.example.weatherforecast.data.model.Favourites
 import kotlinx.coroutines.flow.Flow
 
 
-class WeatherLocalDataSource (val dao: FavCitiesDao) : IWeatherLocalDataSource {
+class WeatherLocalDataSource (val dao: WeatherDao) : IWeatherLocalDataSource {
     override fun getAllFavCites() : Flow<List<Favourites>> {
         return dao.getAllFavCities()
     }

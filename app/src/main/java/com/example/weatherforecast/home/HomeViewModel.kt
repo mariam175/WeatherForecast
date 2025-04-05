@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.example.weatherforecast.R
 import com.example.weatherforecast.data.model.CurrentWeather
 import com.example.weatherforecast.data.model.DailyAndHourlyWeather
 import com.example.weatherforecast.data.model.DailyWeatherResponse
@@ -50,7 +51,11 @@ class HomeViewModel(val repo:Repositry , val context: Context) : ViewModel() {
     }
 
     fun getWindSpeed() {
-        _speed.value = SettingsChanges.getWindSpeed(context)
+        val rawSpeed = SettingsChanges.getWindSpeed(context)
+        _speed.value = when (rawSpeed) {
+            "mile/h" -> context.getString(R.string.mileh)
+            else -> context.getString(R.string.unit_m_s)
+        }
 
     }
 
@@ -136,7 +141,6 @@ class HomeViewModel(val repo:Repositry , val context: Context) : ViewModel() {
         fun saveCurrentCity(city: String) {
             SettingsChanges.saveCurrentCity(context, city)
         }
-
 
     }
 

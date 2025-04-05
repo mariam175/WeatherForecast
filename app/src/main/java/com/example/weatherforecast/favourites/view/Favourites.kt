@@ -2,6 +2,7 @@ package com.example.weatherforecast.favourites.view
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,9 +18,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
@@ -33,10 +36,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.weatherforecast.R
 import com.example.weatherforecast.data.local.FavCititesState
@@ -49,9 +56,17 @@ import kotlinx.coroutines.launch
 @Composable
 fun FavouritesScreen(navHostController: NavHostController ,favouritesViewModel: FavouritesViewModel){
     Column (
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center
+        modifier = Modifier.fillMaxSize()
+            .padding(top = 30.dp),
+        verticalArrangement =Arrangement.spacedBy(15.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ){
+        Text(
+            stringResource(R.string.Favourites),
+            fontWeight = FontWeight.Bold,
+            fontSize = 22.sp
+        )
+
         Fav(favouritesViewModel , nav = {
             navHostController.navigate(NavigationRoutes.MapScreen(isFav = true))
         },navHostController)
@@ -84,7 +99,8 @@ private fun Fav(favouritesViewModel: FavouritesViewModel, nav:()->Unit , navHost
                   ,
               onClick = {
                   nav.invoke()
-              }
+              },
+              containerColor = MaterialTheme.colorScheme.tertiary
           ) {
               Icon(
                   painter = painterResource(R.drawable.heart_plus),
@@ -121,7 +137,7 @@ fun FavList(favItems: List<Favourites>, favouritesViewModel: FavouritesViewModel
                        modifier = Modifier.height(10.dp)
                    )
                    Text(
-                       text = "No Fav Cities",
+                       text = stringResource(R.string.NoFavCities),
                        fontWeight = FontWeight.Bold
                    )
                }
@@ -160,6 +176,16 @@ fun FavItem(city:String  , nav:()->Unit , delete:()->Unit) {
     Row (
         modifier = Modifier
             .fillMaxWidth()
+            .padding(horizontal = 16.dp , vertical = 8.dp)
+            .shadow(
+                elevation = 6.dp,
+                shape = RoundedCornerShape(bottomEnd = 16.dp , bottomStart = 16.dp),
+                clip = false
+            )
+            .clip(
+                shape = RoundedCornerShape(bottomEnd = 16.dp , bottomStart = 16.dp)
+            )
+            .background(MaterialTheme.colorScheme.surface)
             .padding(16.dp)
             .clickable {
                 nav.invoke()

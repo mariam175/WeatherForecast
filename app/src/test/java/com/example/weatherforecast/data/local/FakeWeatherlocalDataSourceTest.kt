@@ -1,6 +1,9 @@
 package com.example.weatherforecast.data.local
 
 import com.example.weatherforecast.data.model.Alert
+import com.example.weatherforecast.data.model.CityWeather
+import com.example.weatherforecast.data.model.CurrentWeather
+import com.example.weatherforecast.data.model.DailyAndHourlyWeather
 import com.example.weatherforecast.data.model.Favourites
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,6 +38,34 @@ class FakeWeatherlocalDataSourceTest(
     }
 
     override fun getAlertById(id: Long): Flow<Alert> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun saveCurrentWeather(currentWeather: CurrentWeather): Long {
+        TODO("Not yet implemented")
+    }
+
+    override fun getCurrentWeather(): Flow<CurrentWeather> {
+        TODO("Not yet implemented")
+    }
+
+    override fun getDailyAndHourly(): Flow<DailyAndHourlyWeather> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun saveDailyAndHourly(dailyAndHourlyWeatherEntity: DailyAndHourlyWeather): Long {
+        TODO("Not yet implemented")
+    }
+
+    override fun getCityWeather(city: String): Flow<CityWeather> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun saveCityWeather(cityWeather: CityWeather) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun deleteCityWeather(cityWeather: CityWeather): Int {
         TODO("Not yet implemented")
     }
 }

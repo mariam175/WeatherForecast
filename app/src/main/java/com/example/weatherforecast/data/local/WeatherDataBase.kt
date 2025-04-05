@@ -14,7 +14,7 @@ import com.example.weatherforecast.data.model.Favourites
 @Database(entities = [Favourites::class  , Alert::class , CurrentWeather::class , DailyAndHourlyWeather::class , CityWeather::class], version = 5,exportSchema = false)
 @TypeConverters(TempConverter::class, WeatherConverter::class, WindConverter::class , ListCurrentWeather::class)
 abstract class WeatherDataBase : RoomDatabase() {
-abstract fun getFavDao():FavCitiesDao
+abstract fun getFavDao():WeatherDao
     companion object{
         @Volatile
         private var INSTANCE: WeatherDataBase? = null

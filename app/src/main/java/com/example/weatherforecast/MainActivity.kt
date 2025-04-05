@@ -1,6 +1,7 @@
 package com.example.weatherforecast
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -28,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -73,11 +75,11 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        loctState = mutableStateOf(Location(""))
         val lang =  mutableStateOf(SettingsChanges.getLanguageCode(this))
+        loctState =  mutableStateOf(Location(""))
+         mutableStateOf( SettingsChanges.applyLanguage(this , lang.value))
         setContent {
 
-            remember { mutableStateOf( SettingsChanges.applyLanguage(this , lang.value)) }
            WeatherForecastTheme {
                AppScreen(loctState.value)
            }
@@ -113,11 +115,13 @@ class MainActivity : ComponentActivity() {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults, deviceId)
         if (requestCode == LOCATION_ID) {
-            if ( grantResults[0]== PackageManager.PERMISSION_GRANTED){
+            if ( grantResults.isNotEmpty() && grantResults[0]== PackageManager.PERMISSION_GRANTED){
+                Log.i(TAG, "Location permission granted! Fetching location...")
                 getLoction()
             }
         }
     }
+
     fun checkPremission() : Boolean{
         return checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) ==  PackageManager.PERMISSION_GRANTED
                 || checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) ==  PackageManager.PERMISSION_GRANTED
@@ -127,14 +131,21 @@ class MainActivity : ComponentActivity() {
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
             LocationManager.NETWORK_PROVIDER)
     }
+
     fun enableLoction(){
         val setting: Intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
         startActivity(setting)
     }
+
     @SuppressLint("MissingPermission")
+
     fun getLoction(){
         fusedLoction = LocationServices.getFusedLocationProviderClient(this)
-
+        fusedLoction.lastLocation.addOnSuccessListener { location: Location? ->
+            location?.let {
+                loctState.value = it
+            }
+        }
         fusedLoction.requestLocationUpdates(
             LocationRequest.Builder(0).apply {
                 setPriority(Priority.PRIORITY_HIGH_ACCURACY)
@@ -184,11 +195,11 @@ class MainActivity : ComponentActivity() {
                             painterResource(
                                 item.icon,
                             ),
-                            contentDescription = item.title,
+                            contentDescription = "",
                             modifier = Modifier.size(15.dp),
                         )
                     },
-                    label = { Text(item.title) },
+                    label = { Text(stringResource(item.title)) },
                     selected = selectedItem.value == index,
                     onClick = {
                         selectedItem.value = index
@@ -206,7 +217,7 @@ class MainActivity : ComponentActivity() {
 
 
     @Composable
-    fun BottomNavGraph(navHostController: NavHostController , location: Location , modifier: Modifier) {
+    fun BottomNavGraph(navHostController: NavHostController , location:Location , modifier: Modifier) {
         val context = LocalContext.current
         NavHost(
             navController = navHostController,
@@ -305,4 +316,5 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
 }
