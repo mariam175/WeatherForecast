@@ -15,22 +15,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -40,36 +35,25 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.app.ActivityCompat
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import coil.compose.rememberAsyncImagePainter
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
-import com.bumptech.glide.integration.compose.RequestState
 import com.example.weatherforecast.R
 import com.example.weatherforecast.data.model.CurrentWeather
 import com.example.weatherforecast.data.model.DailyAndHourlyWeather
 import com.example.weatherforecast.data.model.DailyWeatherResponse
 import com.example.weatherforecast.data.model.WeatherResponse
-import com.example.weatherforecast.data.remote.RetrofitHelper
-import com.example.weatherforecast.data.remote.WeatherRemoteDataSource
-import com.example.weatherforecast.data.reopsitry.Repositry
-import com.example.weatherforecast.utils.CheckNetwork
+import com.example.weatherforecast.utils.Helper
 import com.example.weatherforecast.utils.ICON_URL
+import com.example.weatherforecast.utils.NoInternetDialog
 import com.example.weatherforecast.utils.WeatherConditions
 import com.example.weatherforecast.utils.convertDate
 
 import com.example.weatherforecast.utils.convertToHour
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationResult
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.Priority
+import kotlinx.coroutines.delay
 
 
 @SuppressLint("SuspiciousIndentation")
@@ -81,7 +65,8 @@ import com.google.android.gms.location.Priority
         val mapLocation = homeViewModel.getLocationFromPref()
         val locType = homeViewModel.getLocatioType()
         val context = LocalContext.current
-       if(CheckNetwork.checkNetwork(context)){
+    val showNoInternet = remember { mutableStateOf(false) }
+       if(Helper.checkNetwork(context)){
            LaunchedEffect (gpsLocation , lang , unit){
                when(locType){
                    "gps"->{
@@ -100,9 +85,16 @@ import com.google.android.gms.location.Priority
            }
        }
     else{
-        homeViewModel.loadOfflineWeather()
+          LaunchedEffect(Unit) {
+              showNoInternet.value = true
+                delay(3000)
+              showNoInternet.value = false
+              homeViewModel.loadOfflineWeather()
+          }
        }
-
+        if(showNoInternet.value){
+            NoInternetDialog()
+        }
         val weatherState by homeViewModel.currentWeather.collectAsState()
         val dailyState by homeViewModel.dailyWeather.collectAsState()
     val windSpeed by homeViewModel.speed.collectAsState()
@@ -111,8 +103,8 @@ import com.google.android.gms.location.Priority
             is WeatherResponse.Loading -> {
                 Loading()
             }
-            is WeatherResponse.Success -> {
-                val currentWeather = (weatherState as WeatherResponse.Success).data
+            is WeatherResponse.Success<*> -> {
+                val currentWeather:CurrentWeather = (weatherState as WeatherResponse.Success<CurrentWeather>).data
                homeViewModel.saveCurrentWeather(currentWeather)
                 Column(
                     modifier = Modifier
@@ -150,7 +142,6 @@ import com.google.android.gms.location.Priority
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
-
                 .padding(top = 20.dp)
         ) {
             Text(
@@ -206,7 +197,7 @@ import com.google.android.gms.location.Priority
     @Composable
     fun WeatherChracteristic(weather: CurrentWeather , unit:String) {
         Row(
-            horizontalArrangement = Arrangement.spacedBy(60.dp),
+            horizontalArrangement = Arrangement.spacedBy(40.dp),
             modifier = Modifier
                 .padding(16.dp)
                 .border(
@@ -218,27 +209,30 @@ import com.google.android.gms.location.Priority
             CharactersItem(
                 img = R.drawable.wind,
                 value = "${weather.wind.speed}",
-                unit = unit
+                unit = unit,
+                character = stringResource(R.string.Windspeed)
             )
             CharactersItem(
                 img = R.drawable.pressure,
                 value = "${weather.main.pressure}",
-                unit = stringResource(R.string.unit_hpa)
+                unit = stringResource(R.string.unit_hpa),
+                character = stringResource(R.string.Pressure)
             )
 
             CharactersItem(
                 img = R.drawable.humidty,
                 value = "${weather.main.humidity}",
-                unit = "%"
+                unit = "%",
+                character = stringResource(R.string.Humidity)
             )
         }
     }
 
     @OptIn(ExperimentalGlideComposeApi::class)
     @Composable
-    fun CharactersItem(img: Int, value: String, unit: String) {
+    fun CharactersItem(img: Int, value: String, unit: String,character:String) {
         Column(
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             GlideImage(
                 contentDescription = "",
@@ -247,6 +241,10 @@ import com.google.android.gms.location.Priority
             )
             Text(value)
             Text(unit)
+            Text(character ,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Bold)
+
         }
     }
 

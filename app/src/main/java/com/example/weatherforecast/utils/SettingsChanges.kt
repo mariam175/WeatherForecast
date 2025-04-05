@@ -1,23 +1,16 @@
 package com.example.weatherforecast.utils
 
+import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.res.Configuration
+import com.example.weatherforecast.R
 import com.google.android.gms.maps.model.LatLng
 import java.util.Locale
 
+
 object SettingsChanges {
-    private const val PREFS_NAME = "settings"
-    private const val LANGUAGE_KEY = "language"
-    private const val UNIT = "unit"
-    private const val SPEED = "speed"
-    private const val LOCATION = "location"
-    private const val LAT = "lat"
-    private const val LNG = "lng"
-    private const val CURRLAT = "currlat"
-    private const val CURRLNG = "currlng"
-    private const val CITY = "city"
-    private const val ENABLENOTIFY = "notifi"
+
     fun changeLanguage(context: Context, languageCode: String) {
         val preferences: SharedPreferences =
             context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -72,7 +65,7 @@ object SettingsChanges {
     fun getWindSpeed(context: Context): String {
         val preferences: SharedPreferences =
             context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-        return preferences.getString(SPEED, "m/s") ?: "m/s"
+        return preferences.getString(SPEED, context.getString(R.string.unit_m_s)) ?: context.getString(R.string.unit_m_s)
     }
     fun changeLocation(context: Context , locType:String){
         val preferences: SharedPreferences =

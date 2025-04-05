@@ -17,9 +17,9 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 @SmallTest
-class FavCitiesDaoTest {
+class WeatherDaoTest {
     private lateinit var database:WeatherDataBase
-    private lateinit var dao: FavCitiesDao
+    private lateinit var dao: WeatherDao
     @Before
     fun setup(){
         database = Room.inMemoryDatabaseBuilder(

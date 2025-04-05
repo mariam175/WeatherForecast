@@ -175,7 +175,7 @@ fun Map(navHostController: NavHostController ,
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(20.dp),
+                    .padding(horizontal = 20.dp , vertical = 50.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(text = "Selected Location",

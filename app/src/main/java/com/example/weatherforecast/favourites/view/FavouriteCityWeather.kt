@@ -3,7 +3,6 @@ package com.example.weatherforecast.favourites.view
 
 
 import android.annotation.SuppressLint
-import android.util.Log
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -35,6 +34,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
@@ -46,8 +46,9 @@ import com.example.weatherforecast.data.model.DailyAndHourlyWeather
 import com.example.weatherforecast.data.model.DailyWeatherResponse
 import com.example.weatherforecast.data.model.WeatherResponse
 import com.example.weatherforecast.favourites.FavouritesViewModel
-import com.example.weatherforecast.utils.CheckNetwork
+import com.example.weatherforecast.utils.Helper
 import com.example.weatherforecast.utils.ICON_URL
+import com.example.weatherforecast.utils.WeatherConditions
 import com.example.weatherforecast.utils.convertDate
 
 import com.example.weatherforecast.utils.convertToHour
@@ -61,7 +62,7 @@ fun FavCitiesWeather(navHostController: NavHostController, favouritesViewModel: 
     val lang = favouritesViewModel.getLanguage(context)
     val unit = favouritesViewModel.getUnit(context)
     favouritesViewModel.getWindSpeed(context)
-    if(CheckNetwork.checkNetwork(context)){
+    if(Helper.checkNetwork(context)){
         LaunchedEffect (lang , unit){
             favouritesViewModel.getCurrentWeather(lat , lon , lang , unit)
             favouritesViewModel.getDailyWeather(lat, lon, lang, unit)
@@ -81,8 +82,8 @@ fun FavCitiesWeather(navHostController: NavHostController, favouritesViewModel: 
         is WeatherResponse.Loading -> {
             Loading()
         }
-        is WeatherResponse.Success -> {
-            val currentWeather = (weatherState as WeatherResponse.Success).data
+        is WeatherResponse.Success<*> -> {
+            val currentWeather = (weatherState as WeatherResponse.Success<CurrentWeather>).data
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -146,7 +147,7 @@ fun CurrentWeather(weather: CurrentWeather , unit: String , sympole:String) {
             fontStyle = FontStyle.Italic
         )
         GlideImage(
-            model = ICON_URL + weather.weather.get(0).icon + ".png",
+            model = WeatherConditions.getWeatherConditions(weather.weather.get(0).icon),
             contentDescription = "",
             Modifier.size(60.dp)
         )
@@ -170,11 +171,10 @@ fun Loading2() {
         CircularProgressIndicator()
     }
 }
-
 @Composable
 fun WeatherChracteristic(weather: CurrentWeather , unit:String) {
     Row(
-        horizontalArrangement = Arrangement.spacedBy(60.dp),
+        horizontalArrangement = Arrangement.spacedBy(40.dp),
         modifier = Modifier
             .padding(16.dp)
             .border(
@@ -186,27 +186,30 @@ fun WeatherChracteristic(weather: CurrentWeather , unit:String) {
         CharactersItem(
             img = R.drawable.wind,
             value = "${weather.wind.speed}",
-            unit = unit
+            unit = unit,
+            character = stringResource(R.string.Windspeed)
         )
         CharactersItem(
             img = R.drawable.pressure,
             value = "${weather.main.pressure}",
-            unit = stringResource(R.string.unit_hpa)
+            unit = stringResource(R.string.unit_hpa),
+            character = stringResource(R.string.Pressure)
         )
 
         CharactersItem(
             img = R.drawable.humidty,
             value = "${weather.main.humidity}",
-            unit = "%"
+            unit = "%",
+            character =stringResource(R.string.Humidity)
         )
     }
 }
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun CharactersItem(img: Int, value: String, unit: String) {
+fun CharactersItem(img: Int, value: String, unit: String,character:String) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         GlideImage(
             contentDescription = "",
@@ -215,6 +218,10 @@ fun CharactersItem(img: Int, value: String, unit: String) {
         )
         Text(value)
         Text(unit)
+        Text(character ,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.Bold)
+
     }
 }
 
